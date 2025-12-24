@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:17
+    container_name: quizizz_clone_db
+    ports:
+      - "6432:5432"
+    environment:
+      - POSTGRES_DB=quizizz_clone
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d quizizz_clone -U user"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - quizizz-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: quizizz_clone_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - quizizz-network
+
+networks:
+  quizizz-network:
+    driver: bridge

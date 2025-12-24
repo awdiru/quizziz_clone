@@ -1,0 +1,67 @@
+server:
+  port: 8080
+app:
+  address: http://localhost:8080
+  secret: mySecretKeyForJwtAuthenticationMustBeVeryLongAndSecure
+  cors:
+    allowed-origins: "http://localhost:3000"
+  admin:
+    login: admin
+    password: password
+    email: awdiru@gmail.com
+
+spring:
+  application:
+    name: quizizz
+
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: program-shcool@yandex.ru
+    password: jlkkhlccvtkygrgn
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: false
+
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 10
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  datasource:
+    url: jdbc:postgresql://localhost:6432/quizizz_clone
+    username: user
+    password: password
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.transaction: DEBUG
+    org.springframework.orm.jpa: DEBUG
