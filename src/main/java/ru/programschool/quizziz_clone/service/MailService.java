@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public class MailService {
     private final JavaMailSender mailSender;
 
-    @Value("${app.address}")
-    private String serverAddress;
+    @Value("${app.cors.allowed-origins}")
+    private String address;
 
     @Value("${spring.mail.username}")
     private String fromEmail;
@@ -27,7 +27,7 @@ public class MailService {
         message.setTo(adminEmail);
         message.setSubject("Запрос на регистрацию учителя");
         message.setText("Учитель " + teacherEmail + " хочет зарегистрироваться. \n" +
-                "Подтвердить: " + serverAddress+ "/api/auth/confirm?token=" + token);
+                "Подтвердить: " + address + "/auth/confirm?token=" + token);
         mailSender.send(message);
     }
 }

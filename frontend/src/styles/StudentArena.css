@@ -1,0 +1,95 @@
+/* StudentArena.css */
+.arena-container {
+    @apply min-h-screen bg-brand-purple flex items-center justify-center p-5 font-sans;
+}
+
+/* Экран ожидания */
+.arena-waiting-card {
+    @apply bg-white/10 p-10 rounded-[30px] text-center text-white max-w-[400px] w-full backdrop-blur-md border border-white/10;
+}
+
+.arena-waiting-title {
+    @apply text-2xl font-black mb-5 text-white;
+}
+
+.arena-waiting-text {
+    @apply text-lg opacity-80 text-white font-medium;
+}
+
+.arena-waiting-pin {
+    @apply mt-5 text-sm font-bold text-brand-yellow uppercase tracking-widest;
+}
+
+/* Экран вопроса */
+.arena-question-card {
+    @apply bg-white p-10 rounded-quiz-lg w-full max-w-[700px] text-center shadow-2xl;
+}
+
+.arena-question-header {
+    @apply flex items-center justify-center gap-2 text-brand-purple-light font-black tracking-widest uppercase text-sm mb-6;
+}
+
+.arena-question-title {
+    @apply text-brand-dark text-[28px] font-black mb-10 leading-tight;
+}
+
+.arena-answers-grid {
+    @apply grid grid-cols-1 gap-4 mb-10;
+}
+
+.arena-answer-btn {
+    @apply p-6 rounded-btn text-xl font-bold transition-all text-left border-4 shadow-sm relative overflow-hidden;
+}
+
+.arena-answer-btn-default {
+    @apply border-brand-input bg-white text-brand-dark hover:bg-slate-50;
+}
+
+.arena-answer-btn-selected {
+    @apply border-brand-purple bg-brand-purple-subtle text-brand-purple;
+}
+
+.arena-submit-button {
+    @apply w-full p-6 rounded-btn border-none bg-brand-yellow text-brand-purple text-2xl font-black shadow-btn-yellow active:shadow-none active:translate-y-1 transition-all disabled:opacity-50 disabled:active:translate-y-0 disabled:shadow-none;
+}
+
+/* Экран завершения */
+.arena-finish-card {
+    @apply bg-white p-12 rounded-quiz-lg w-full max-w-[500px] text-center flex flex-col items-center shadow-2xl animate-in zoom-in;
+}
+
+.arena-finish-title {
+    @apply text-4xl font-black text-brand-purple my-4;
+}
+
+.arena-finish-subtitle {
+    @apply text-lg text-brand-gray mb-8;
+}
+
+.arena-stats-row {
+    @apply flex gap-5 mb-10 w-full;
+}
+
+.arena-stat-box {
+    @apply flex-1 p-5 bg-brand-input rounded-btn flex flex-col items-center;
+}
+
+.arena-stat-label {
+    @apply text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider;
+}
+
+.arena-stat-value {
+    @apply text-3xl font-black text-brand-dark;
+}
+
+.arena-home-button {
+    @apply flex items-center gap-3 bg-brand-purple text-white border-none py-4 px-8 rounded-btn font-bold transition-all shadow-btn-purple active:shadow-none active:translate-y-1;
+}
+
+.loader-dots {
+    @apply text-4xl text-white mb-2 font-black;
+}
+
+.loader-dots span {
+    @apply animate-pulse;
+}

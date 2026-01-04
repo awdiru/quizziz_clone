@@ -1,0 +1,52 @@
+/* Register.css */
+.register-container {
+    @apply min-h-screen bg-brand-purple flex items-center justify-center p-4 font-sans;
+}
+
+.register-card {
+    @apply bg-white w-full max-w-md p-8 rounded-quiz shadow-2xl relative animate-in fade-in zoom-in duration-300;
+}
+
+.register-back-button {
+    @apply absolute top-6 left-6 text-slate-400 hover:text-brand-purple transition-colors flex items-center gap-1 text-sm font-bold;
+}
+
+.register-header {
+    @apply text-center mb-8 mt-4;
+}
+
+.register-icon-wrapper {
+    @apply bg-brand-yellow w-16 h-16 rounded-btn flex items-center justify-center mx-auto mb-4 rotate-3 shadow-lg;
+}
+
+.register-icon {
+    @apply text-brand-purple;
+}
+
+.register-title {
+    @apply text-3xl font-black text-brand-purple tracking-tight;
+}
+
+.register-subtitle {
+    @apply text-brand-gray font-medium;
+}
+
+.register-form {
+    @apply space-y-4;
+}
+
+.register-input-group {
+    @apply relative;
+}
+
+.register-input-icon {
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-slate-400;
+}
+
+.register-input {
+    @apply w-full pl-12 pr-4 py-4 bg-brand-input border-2 border-transparent rounded-btn focus:border-brand-purple focus:bg-white outline-none transition-all font-bold text-brand-dark;
+}
+
+.register-button {
+    @apply w-full bg-brand-yellow hover:bg-brand-yellow-hover text-brand-purple font-black py-4 rounded-btn transition-all shadow-btn-yellow active:shadow-none active:translate-y-1 flex items-center justify-center gap-2 mt-2;
+}

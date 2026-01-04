@@ -1,0 +1,36 @@
+/* EnterName.css */
+.enter-name-container {
+    @apply min-h-screen bg-brand-purple flex items-center justify-center p-6 font-sans;
+}
+
+.enter-name-card {
+    @apply w-full max-w-sm bg-white rounded-quiz shadow-2xl p-8 text-center animate-in zoom-in duration-300;
+}
+
+.enter-name-icon-wrapper {
+    @apply bg-brand-yellow-subtle w-16 h-16 rounded-btn flex items-center justify-center mx-auto mb-6 shadow-sm;
+}
+
+.enter-name-icon {
+    @apply text-yellow-600;
+}
+
+.enter-name-title {
+    @apply text-2xl font-black text-brand-purple mb-2 uppercase;
+}
+
+.enter-name-subtitle {
+    @apply text-brand-gray text-sm mb-8 font-medium italic underline underline-offset-4 decoration-brand-yellow;
+}
+
+.enter-name-form {
+    @apply space-y-4;
+}
+
+.enter-name-input {
+    @apply w-full bg-brand-input border-none p-5 rounded-btn text-xl text-center font-bold text-brand-purple focus:ring-4 ring-brand-purple-light/50 outline-none transition-all placeholder:text-slate-400;
+}
+
+.enter-name-button {
+    @apply w-full bg-brand-purple hover:bg-brand-purple-light text-white font-black py-5 rounded-btn text-xl shadow-btn-purple active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-2;
+}

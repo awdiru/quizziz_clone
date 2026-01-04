@@ -1,0 +1,84 @@
+/* Dashboard.css */
+
+.dashboard-container {
+    @apply min-h-screen bg-brand-surface flex flex-col font-sans;
+}
+
+.dashboard-header {
+    @apply bg-brand-purple text-white p-4 shadow-lg flex justify-between items-center;
+}
+
+.dashboard-main {
+    @apply flex-1 p-6 max-w-6xl mx-auto w-full;
+}
+
+.breadcrumb-container {
+    @apply flex items-center gap-2 mb-6 text-sm font-bold text-slate-400 uppercase tracking-widest;
+}
+
+.breadcrumb-link {
+    @apply hover:text-brand-purple-light transition-colors;
+}
+
+/* Кнопки */
+.btn-control-base {
+    @apply px-4 py-2 rounded-btn flex items-center gap-2 font-bold shadow-md transition-all text-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none;
+}
+
+.btn-folder {
+    @apply bg-brand-purple text-white hover:bg-brand-purple-light;
+}
+
+.btn-test {
+    @apply bg-brand-yellow text-brand-purple hover:bg-brand-yellow-hover;
+}
+
+.btn-icon-square {
+    @apply p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 shadow-sm transition-all disabled:text-slate-300;
+}
+
+/* Карточка (Исправлено) */
+.element-card {
+    @apply bg-white border border-slate-200 p-4 rounded-btn shadow-sm flex flex-col transition-all relative;
+}
+
+.element-card:hover {
+    @apply shadow-md border-brand-purple-subtle;
+}
+
+.element-icon-wrapper {
+    @apply p-2.5 rounded-lg;
+}
+
+.icon-folder {
+    @apply bg-brand-purple-subtle text-brand-purple-light;
+}
+
+.icon-test {
+    @apply bg-brand-yellow-subtle text-brand-yellow-hover;
+}
+
+/* Модалки */
+.modal-overlay {
+    @apply fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4;
+}
+
+.modal-content {
+    @apply bg-white rounded-quiz shadow-2xl w-full overflow-hidden animate-in zoom-in duration-150;
+}
+
+.modal-header {
+    @apply p-5 text-white flex justify-between items-center;
+}
+
+.modal-input {
+    @apply w-full p-3.5 border-2 border-brand-input rounded-btn outline-none focus:border-brand-purple-light bg-brand-surface text-sm transition-all;
+}
+
+.btn-modal-primary {
+    @apply w-full bg-brand-purple text-white font-bold py-3.5 rounded-btn hover:bg-brand-purple-light transition-colors;
+}
+
+.btn-modal-yellow {
+    @apply w-full bg-brand-yellow text-brand-purple font-bold py-3.5 rounded-btn hover:bg-brand-yellow-hover transition-all shadow-md;
+}

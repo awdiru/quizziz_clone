@@ -1,0 +1,40 @@
+/* Login.css */
+.login-container {
+    @apply min-h-screen bg-brand-purple flex flex-col items-center justify-center p-4 font-sans;
+}
+
+.login-powered {
+    @apply mb-8 text-white/50 text-sm font-light tracking-widest uppercase;
+}
+
+.login-powered-brand {
+    @apply text-brand-yellow font-bold;
+}
+
+.login-card {
+    @apply bg-white p-8 rounded-quiz shadow-2xl w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500;
+}
+
+.login-title {
+    @apply text-3xl font-black text-brand-purple mb-6 text-center tracking-tight;
+}
+
+.login-form {
+    @apply space-y-5;
+}
+
+.login-input-group {
+    @apply relative;
+}
+
+.login-input-icon {
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-slate-400;
+}
+
+.login-input {
+    @apply w-full pl-12 pr-4 py-4 bg-brand-input border-2 border-transparent rounded-btn focus:border-brand-purple focus:bg-white outline-none transition-all font-bold text-brand-dark;
+}
+
+.login-button {
+    @apply w-full bg-brand-purple hover:bg-brand-purple-light text-white font-bold py-4 rounded-btn transition-all flex items-center justify-center shadow-btn-purple active:shadow-none active:translate-y-1;
+}

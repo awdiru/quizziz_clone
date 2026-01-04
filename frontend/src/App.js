@@ -8,6 +8,7 @@ import TeacherArena from "./pages/TeacherArena";
 import EnterName from "./pages/EnterName";
 import EnterPin from "./pages/EnterPin";
 import StudentArena from './pages/StudentArena';
+import ConfirmEmail from './pages/ConfirmEmail';
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/join" element={<EnterPin />} />
                 <Route path="/join/:pin" element={<EnterName />} />
                 <Route path="/arena/student/:pin" element={<StudentArena />} />
+                <Route path="/auth/confirm" element={<ConfirmEmail />} />
             </Routes>
         </Router>
     );
