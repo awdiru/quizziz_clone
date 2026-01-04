@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Lock, Mail, Loader2 } from 'lucide-react';
+import React, {useState} from 'react';
+import {Loader2, Lock, Mail} from 'lucide-react';
 import api from '../api/axios';
 import '../styles/Login.css'; // Импорт новых стилей
 
@@ -39,19 +39,22 @@ const Login = () => {
                 <h2 className="login-title">Вход для учителя</h2>
 
                 <form onSubmit={handleLogin} className="login-form">
-                    <div className="login-input-group">
+                    {/* Добавлен класс group вручную */}
+                    <div className="login-input-group group">
                         <Mail className="login-input-icon" size={20} />
                         <input
                             type="email"
-                            placeholder="Email"
+                            placeholder="Электронная почта"
                             className="login-input"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            autoFocus
                         />
                     </div>
 
-                    <div className="login-input-group">
+                    {/* Добавлен класс group вручную */}
+                    <div className="login-input-group group">
                         <Lock className="login-input-icon" size={20} />
                         <input
                             type="password"
@@ -68,12 +71,17 @@ const Login = () => {
                         disabled={loading}
                         className="login-button"
                     >
-                        {loading ? <Loader2 className="login-loader" /> : "Войти в систему"}
+                        {loading ? (
+                            <Loader2 className="login-loader" />
+                        ) : (
+                            "ВОЙТИ В СИСТЕМУ"
+                        )}
                     </button>
                 </form>
 
                 <p className="login-footer">
-                    Нет аккаунта? <a href="/register" className="login-link">Подать заявку</a>
+                    Нет аккаунта?
+                    <a href="/register" className="login-link">Подать заявку</a>
                 </p>
             </div>
         </div>

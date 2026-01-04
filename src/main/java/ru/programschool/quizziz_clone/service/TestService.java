@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.programschool.quizziz_clone.exception.list.AccessDeniedException;
+import ru.programschool.quizziz_clone.exception.list.CopyException;
 import ru.programschool.quizziz_clone.exception.list.ResourceNotFoundException;
 import ru.programschool.quizziz_clone.model.dto.element.test.TestContentDto;
 import ru.programschool.quizziz_clone.model.dto.element.test.answer.AnswerDto;
@@ -14,6 +15,7 @@ import ru.programschool.quizziz_clone.model.entity.postgrsql.Test;
 import ru.programschool.quizziz_clone.model.entity.postgrsql.User;
 import ru.programschool.quizziz_clone.repository.postgrsql.ElementRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -62,6 +64,10 @@ public class TestService {
         if (!fileSystemService.hasAccess(test, user, false))
             throw new AccessDeniedException("У вас нет прав на просмотр этого теста");
 
+        return mapToTestContentDto(test, user);
+    }
+
+    public TestContentDto mapToTestContentDto(Test test, User user) {
         return TestContentDto.builder()
                 .id(test.getId())
                 .name(test.getName())

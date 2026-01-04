@@ -80,11 +80,13 @@ const TestEditor = () => {
         <div className="editor-container">
             <header className="editor-header">
                 <button onClick={goBack} className="editor-back-btn">
-                    <ChevronLeft size={20}/> Назад
+                    <ChevronLeft size={20}/>
+                    <span>Назад</span>
                 </button>
                 <h1 className="editor-header-title">Редактор теста</h1>
                 <button onClick={handleSave} className="editor-save-btn">
-                    <Save size={18}/> Сохранить
+                    <Save size={18}/>
+                    <span>Сохранить</span>
                 </button>
             </header>
 
@@ -92,11 +94,16 @@ const TestEditor = () => {
                 {questions.map((q, qIndex) => (
                     <div key={qIndex} className="question-card">
                         <div className="question-number-badge">{qIndex + 1}</div>
-                        <button onClick={() => removeQuestion(qIndex)} className="question-delete-btn">
+
+                        <button
+                            onClick={() => removeQuestion(qIndex)}
+                            className="question-delete-btn"
+                            title="Удалить вопрос"
+                        >
                             <Trash2 size={20}/>
                         </button>
 
-                        <div className="mb-6">
+                        <div className="question-input-group">
                             <label className="question-input-label">Текст вопроса</label>
                             <textarea
                                 className="question-textarea"
@@ -117,6 +124,7 @@ const TestEditor = () => {
                                     <button
                                         onClick={() => toggleRight(qIndex, aIndex)}
                                         className={`answer-toggle-btn ${ans.isRight ? 'answer-toggle-btn-correct' : 'answer-toggle-btn-default'}`}
+                                        title={ans.isRight ? "Правильный ответ" : "Отметить как правильный"}
                                     >
                                         <CheckCircle2 size={24}/>
                                     </button>
@@ -130,21 +138,27 @@ const TestEditor = () => {
                                             setQuestions(n);
                                         }}
                                     />
-                                    <button onClick={() => removeAnswer(qIndex, aIndex)} className="answer-remove-btn">
+                                    <button
+                                        onClick={() => removeAnswer(qIndex, aIndex)}
+                                        className="answer-remove-btn"
+                                        title="Удалить вариант"
+                                    >
                                         <X size={18}/>
                                     </button>
                                 </div>
                             ))}
 
                             <button onClick={() => addAnswer(qIndex)} className="add-answer-btn">
-                                <Plus size={18}/> Добавить вариант
+                                <Plus size={18}/>
+                                <span>Добавить вариант</span>
                             </button>
                         </div>
                     </div>
                 ))}
 
                 <button onClick={addQuestion} className="add-question-btn">
-                    <Plus size={32}/> ДОБАВИТЬ ВОПРОС
+                    <Plus size={32} strokeWidth={3}/>
+                    <span>ДОБАВИТЬ ВОПРОС</span>
                 </button>
             </main>
         </div>

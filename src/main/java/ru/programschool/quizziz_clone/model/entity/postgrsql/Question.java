@@ -30,4 +30,12 @@ public class Question {
     @Builder.Default
     @ToString.Exclude
     private List<Answer> answers = new ArrayList<>();
+
+    public Question copy(Test test) {
+        Question question = new Question();
+        question.setQuestion(getQuestion());
+        question.setTest(test);
+        question.setAnswers(getAnswers().stream().map(a -> a.copy(question)).toList());
+        return question;
+    }
 }

@@ -4,7 +4,7 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import {QRCodeSVG} from 'qrcode.react';
 import api from '../api/axios';
-import {ArrowLeft, Crown, Home, Loader2, Play, SkipForward, Users} from 'lucide-react';
+import {ArrowLeft, Crown, Loader2, Play, SkipForward, Users} from 'lucide-react';
 import {WS_URL} from "../config";
 import '../styles/TeacherArena.css'; // Импорт стилей
 
@@ -84,116 +84,111 @@ const TeacherArena = () => {
         finally { setLoading(false); }
     };
 
-    const getGridConfig = (count) => {
-        if (count <= 4) return { cols: count, width: 'max-w-4xl' };
-        if (count <= 8) return { cols: 4, width: 'max-w-5xl' };
-        if (count <= 12) return { cols: 6, width: 'max-w-6xl' };
-        return { cols: 8, width: 'max-w-full' };
-    };
-
-    const { cols, width } = getGridConfig(participants.length);
-
-    // --- ИТОГИ ---
-    if (isFinished) {
-        return (
-            <div className="arena-finish-container">
-                <div className="arena-crown-wrapper">
-                    <Crown size={64} className="text-brand-purple" />
-                </div>
-                <h1 className="arena-finish-title">Итоги игры</h1>
-                <div className="max-w-3xl w-full space-y-4">
-                    {participants.sort((a,b) => b.score - a.score).map((p, i) => (
-                        <div key={i} className={`arena-leaderboard-item ${i === 0 ? 'arena-leaderboard-winner' : 'arena-leaderboard-default'}`}>
-                            <div className="flex items-center gap-4">
-                                <span className="text-2xl font-black">#{i + 1}</span>
-                                <span className="text-xl font-bold">{p.name}</span>
-                            </div>
-                            <span className="text-2xl font-black">{p.score}</span>
-                        </div>
-                    ))}
-                </div>
-                <button onClick={() => navigate('/dashboard')} className="mt-12 bg-white text-brand-purple px-8 py-4 rounded-2xl font-black flex items-center gap-2 hover:bg-purple-100 transition-all">
-                    <Home size={20} /> ВЕРНУТЬСЯ В МЕНЮ
-                </button>
-            </div>
-        );
-    }
-
-    // --- ИГРА ---
-    if (currentQuestion) {
-        const isLast = currentQuestion.currentQuestionNumber + 1 === currentQuestion.totalQuestions;
-        return (
-            <div className="teacher-arena-container p-8">
-                <div className="arena-game-header">
-                    <div className="arena-game-pin-badge">PIN: {pin}</div>
-                    <div className="text-purple-300 font-bold uppercase">Вопрос {currentQuestion.currentQuestionNumber + 1}/{currentQuestion.totalQuestions}</div>
-                </div>
-
-                <div className="flex-1 flex flex-col items-center justify-center text-center max-w-5xl mx-auto">
-                    <h1 className="arena-game-question-text">{currentQuestion.questionText}</h1>
-                    <div className="grid grid-cols-2 gap-4 w-full">
-                        {currentQuestion.answers.map((a, i) => (
-                            <div key={i} className="arena-answer-item">{a.answerText}</div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className={`${width} mx-auto mb-12 w-full`}>
-                    <div className="grid gap-5" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
-                        {participants.map((p, i) => (
-                            <div key={i} className="arena-player-card">
-                                <span className="arena-player-name">{p.name}</span>
-                                <div className="flex items-start">
-                                    <div className="relative">
-                                        <span className="arena-player-score">{p.score}</span>
-                                        {deltas[p.name] !== undefined && (
-                                            <span className="arena-player-delta">
-                                                {deltas[p.name] >= 0 ? `+${deltas[p.name]}` : deltas[p.name]}
-                                             </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                        <button
-                            onClick={handleAction}
-                            disabled={loading}
-                            style={{ gridColumnStart: cols }}
-                            className={`arena-next-button ${isLast ? 'bg-brand-red text-white' : 'bg-brand-yellow text-brand-purple'}`}
-                        >
-                            {loading ? <Loader2 className="animate-spin" /> : <SkipForward size={32} fill="currentColor" />}
-                            <span className="font-black uppercase text-lg">{isLast ? 'Завершить' : 'Далее'}</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // --- ЛОББИ ---
     return (
         <div className="teacher-arena-container">
+            {/* ШАПКА */}
             <header className="arena-header">
-                <button onClick={() => navigate('/dashboard')} className="arena-back-button"><ArrowLeft size={16} /> Выход</button>
+                <button onClick={() => navigate('/dashboard')} className="arena-back-button">
+                    <ArrowLeft size={16}/> ВЫХОД ИЗ ИГРЫ
+                </button>
+                {currentQuestion && (
+                    <div className="flex items-center gap-4">
+                        <div className="bg-brand-yellow text-brand-purple px-4 py-1 rounded-full font-black text-sm">
+                            ВОПРОС {currentQuestion.number}
+                        </div>
+                        <button onClick={handleAction} className="btn-icon-white">
+                            <SkipForward size={20}/>
+                        </button>
+                    </div>
+                )}
             </header>
-            <main className="arena-lobby-main">
-                <div className="arena-qrcode-wrapper"><QRCodeSVG value={`${window.location.origin}/join/${pin}`} size={200} /></div>
-                <div className="text-center md:text-left">
-                    <span className="arena-pin-label">Код комнаты:</span>
-                    <h1 className="arena-pin-value">{pin}</h1>
-                    <button onClick={handleAction} disabled={participants.length === 0 || loading} className="arena-start-button">
-                        {loading ? <Loader2 className="animate-spin" /> : <Play size={32} fill="currentColor" />} НАЧАТЬ
+
+            {/* ОСНОВНОЙ КОНТЕНТ */}
+            {!currentQuestion && !isFinished ? (
+                /* ЛОББИ */
+                <main className="arena-lobby-main">
+                    <div className="arena-qrcode-wrapper">
+                        <QRCodeSVG value={`${window.location.origin}/join/${pin}`} size={240}/>
+                    </div>
+                    <div className="text-center md:text-left">
+                        <span className="arena-pin-label">ПРИСОЕДИНЯЙТЕСЬ ПО КОДУ:</span>
+                        <h1 className="arena-pin-value">{pin}</h1>
+                        <button
+                            onClick={handleAction}
+                            disabled={participants.length === 0 || loading}
+                            className="arena-start-button"
+                        >
+                            {loading ? <Loader2 className="animate-spin"/> : <Play size={32} fill="currentColor"/>}
+                            НАЧАТЬ ИГРУ
+                        </button>
+                    </div>
+                </main>
+            ) : isFinished ? (
+                /* ФИНАЛ */
+                <div className="arena-finish-container">
+                    <div className="arena-crown-wrapper">
+                        <Crown size={80}/>
+                    </div>
+                    <h1 className="arena-finish-title text-brand-yellow">ПОБЕДИТЕЛИ</h1>
+                    <div className="leaderboard-final">
+                        {participants.slice(0, 5).map((p, i) => (
+                            <div key={i} className="leaderboard-item">
+                                <span className="font-black text-xl">{i + 1}. {p.name}</span>
+                                <span className="text-brand-yellow font-black">{p.score}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <button onClick={() => navigate('/dashboard')} className="arena-start-button mt-12">
+                        ВЕРНУТЬСЯ В МЕНЮ
                     </button>
                 </div>
-            </main>
-            <div className="arena-lobby-footer">
-                <div className="flex items-center gap-2 mb-4 text-purple-300 font-bold uppercase text-sm"><Users size={18} /> Игроков: {participants.length}</div>
-                <div className="flex flex-wrap gap-4">
-                    {participants.map((p, i) => (
-                        <div key={i} className="bg-white/10 px-6 py-3 rounded-2xl font-bold">{p.name}</div>
-                    ))}
+            ) : (
+                /* ИГРОВОЙ ПРОЦЕСС */
+                <main className="arena-game-main">
+                    <div className="arena-question-box">
+                        <h2 className="arena-question-text">{currentQuestion.questionText}</h2>
+
+                        {/* ВОЗВРАЩЕННЫЕ ВАРИАНТЫ ОТВЕТОВ */}
+                        <div className="arena-teacher-answers-grid">
+                            {currentQuestion.answers.map((ans) => (
+                                <div key={ans.number} className="arena-teacher-answer-item">
+                                    <div className="answer-number">{ans.number}</div>
+                                    <span>{ans.answerText}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* СПИСОК УЧАСТНИКОВ ВНИЗУ */}
+                    <div className="arena-participants-bottom">
+                        {participants.map((p) => (
+                            <div key={p.name} className="participant-card">
+                                {p.answered && deltas[p.name] !== undefined && (
+                                    <span className="delta-points">+{deltas[p.name]}</span>
+                                )}
+                                <span className="participant-name">{p.name}</span>
+                                <span className="participant-score">{p.score}</span>
+                            </div>
+                        ))}
+                    </div>
+                </main>
+            )}
+
+            {/* ФУТЕР ТОЛЬКО ДЛЯ ЛОББИ */}
+            {!currentQuestion && !isFinished && (
+                <div className="arena-lobby-footer">
+                    <div className="flex items-center gap-2 mb-6 text-purple-300 font-bold uppercase text-sm">
+                        <Users size={18}/> ИГРОКОВ В КОМНАТЕ: {participants.length}
+                    </div>
+                    <div className="flex flex-wrap gap-4">
+                        {participants.map((p, i) => (
+                            <div key={i} className="bg-white/10 px-6 py-3 rounded-2xl font-bold border border-white/5">
+                                {p.name}
+                            </div>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

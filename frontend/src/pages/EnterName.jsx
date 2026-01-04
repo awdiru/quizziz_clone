@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import api from '../api/axios';
-import { User, Play, Loader2 } from 'lucide-react';
-import '../styles/EnterName.css'; // Не забудь импортировать стили
+import {Loader2, Play, User} from 'lucide-react';
+import '../styles/EnterName.css';
 
 const EnterName = () => {
     const { pin } = useParams();
@@ -26,26 +26,32 @@ const EnterName = () => {
         <div className="enter-name-container">
             <div className="enter-name-card">
                 <div className="enter-name-icon-wrapper">
-                    <User size={32} className="enter-name-icon" />
+                    <User size={40} className="enter-name-icon"/>
                 </div>
-                <h1 className="enter-name-title">Как вас зовут?</h1>
-                <p className="enter-name-subtitle">Комната: {pin}</p>
+
+                <h1 className="enter-name-title">Представьтесь</h1>
+
+                <p className="enter-name-subtitle">
+                    Вход в комнату: <span className="room-pin-display">{pin}</span>
+                </p>
 
                 <form onSubmit={handleJoin} className="enter-name-form">
                     <input
                         className="enter-name-input"
-                        placeholder="Ваше имя"
+                        placeholder="Ваше имя..."
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
+                        autoFocus
                     />
-                    <button type="submit" disabled={loading} className="enter-name-button">
+
+                    <button type="submit" disabled={loading || !name.trim()} className="enter-name-button">
                         {loading ? (
                             <Loader2 className="enter-name-loader" />
                         ) : (
                             <>
-                                <Play fill="currentColor" size={20} />
-                                ПОЕХАЛИ!
+                                <Play fill="currentColor" size={24}/>
+                                <span>ПОЕХАЛИ!</span>
                             </>
                         )}
                     </button>

@@ -1,28 +1,57 @@
-/* Dashboard.css */
-
 .dashboard-container {
     @apply min-h-screen bg-brand-surface flex flex-col font-sans;
 }
 
+/* --- Шапка --- */
 .dashboard-header {
-    @apply bg-brand-purple text-white p-4 shadow-lg flex justify-between items-center;
+    @apply bg-brand-purple text-white p-4 shadow-xl flex justify-between items-center z-20;
 }
 
+.header-logo {
+    @apply font-bold text-xl tracking-tight;
+}
+
+.header-user-badge {
+    @apply flex items-center gap-2 px-3 py-1.5 bg-brand-purple-light/30 rounded-btn border border-white/10;
+}
+
+.header-username {
+    @apply text-sm font-medium;
+}
+
+.btn-logout-link {
+    @apply flex items-center gap-2 hover:text-brand-yellow transition-colors text-sm font-semibold;
+}
+
+/* --- Главный контент --- */
 .dashboard-main {
-    @apply flex-1 p-6 max-w-6xl mx-auto w-full;
+    @apply flex-1 p-6 max-w-7xl mx-auto w-full animate-in fade-in duration-500;
 }
 
+/* --- Хлебные крошки --- */
 .breadcrumb-container {
-    @apply flex items-center gap-2 mb-6 text-sm font-bold text-slate-400 uppercase tracking-widest;
+    @apply flex items-center gap-3 mb-8 text-sm font-black text-brand-gray uppercase tracking-tighter;
 }
 
 .breadcrumb-link {
-    @apply hover:text-brand-purple-light transition-colors;
+    @apply flex items-center gap-1 hover:text-brand-purple transition-all cursor-pointer;
 }
 
-/* Кнопки */
+.breadcrumb-separator {
+    @apply text-slate-300;
+}
+
+/* --- Кнопки управления (Верхняя панель) --- */
+.controls-panel {
+    @apply flex gap-4 mb-8 items-center;
+}
+
+.btn-icon-square {
+    @apply p-2 rounded-lg border-2 border-brand-input bg-white text-brand-gray hover:border-brand-purple hover:text-brand-purple transition-all disabled:opacity-30 disabled:cursor-not-allowed;
+}
+
 .btn-control-base {
-    @apply px-4 py-2 rounded-btn flex items-center gap-2 font-bold shadow-md transition-all text-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none;
+    @apply px-5 py-2.5 rounded-btn flex items-center gap-2 font-black shadow-md transition-all text-sm active:scale-95 disabled:bg-brand-input disabled:text-brand-gray/50 disabled:shadow-none disabled:cursor-not-allowed;
 }
 
 .btn-folder {
@@ -33,21 +62,30 @@
     @apply bg-brand-yellow text-brand-purple hover:bg-brand-yellow-hover;
 }
 
-.btn-icon-square {
-    @apply p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 shadow-sm transition-all disabled:text-slate-300;
+/* --- Сетка и Карточки --- */
+.elements-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
 }
 
-/* Карточка (Исправлено) */
+/* ВНИМАНИЕ: убрал group отсюда, добавил в JSX */
 .element-card {
-    @apply bg-white border border-slate-200 p-4 rounded-btn shadow-sm flex flex-col transition-all relative;
+    @apply bg-white border-2 border-brand-input p-5 rounded-quiz shadow-sm flex flex-col transition-all relative cursor-pointer overflow-hidden;
 }
 
 .element-card:hover {
-    @apply shadow-md border-brand-purple-subtle;
+    @apply shadow-xl border-brand-purple/20 -translate-y-1;
+}
+
+.lock-badge {
+    @apply absolute top-2 right-2 p-1.5 bg-brand-surface/80 text-brand-gray/60 rounded-full backdrop-blur-sm shadow-sm;
+}
+
+.element-main-info {
+    @apply flex items-center gap-3 cursor-pointer;
 }
 
 .element-icon-wrapper {
-    @apply p-2.5 rounded-lg;
+    @apply p-3 rounded-2xl transition-transform;
 }
 
 .icon-folder {
@@ -58,27 +96,135 @@
     @apply bg-brand-yellow-subtle text-brand-yellow-hover;
 }
 
-/* Модалки */
+.element-title {
+    @apply font-bold text-brand-dark truncate text-sm leading-tight pr-6;
+}
+
+.element-owner-info {
+    @apply text-[10px] text-brand-gray mt-0.5 truncate font-medium flex items-center gap-1;
+}
+
+/* Футер карточки */
+.element-footer {
+    @apply flex justify-between items-center mt-3 pt-2 border-t border-brand-input/50;
+}
+
+.element-date {
+    @apply flex items-center gap-1 text-[10px] text-brand-gray/40 font-semibold uppercase tracking-wider;
+}
+
+.element-actions {
+    @apply flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity;
+}
+
+.btn-action {
+    @apply p-1.5 rounded-md transition-all disabled:text-brand-input disabled:cursor-not-allowed;
+}
+
+.btn-action-play {
+    @apply text-brand-green hover:bg-brand-green/10;
+}
+
+.btn-action-share {
+    @apply text-brand-gray/60 hover:text-brand-purple-light hover:bg-brand-purple-subtle;
+}
+
+.btn-action-copy {
+    @apply text-brand-gray/60 hover:text-brand-purple-light hover:bg-brand-purple-subtle;
+}
+
+.btn-action-edit {
+    @apply text-brand-gray/60 hover:text-brand-purple-light hover:bg-brand-purple-subtle;
+}
+
+.btn-action-delete {
+    @apply text-brand-gray/60 hover:text-brand-red hover:bg-brand-red/10;
+}
+
+/* --- Модальные окна --- */
 .modal-overlay {
-    @apply fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4;
+    @apply fixed inset-0 bg-brand-dark/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200;
 }
 
 .modal-content {
-    @apply bg-white rounded-quiz shadow-2xl w-full overflow-hidden animate-in zoom-in duration-150;
+    @apply bg-white rounded-quiz shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in slide-in-from-bottom-8 duration-300;
+}
+
+.modal-content-wide {
+    @apply max-w-2xl max-h-[85vh] flex flex-col;
+}
+
+.modal-content-narrow {
+    @apply max-w-sm;
 }
 
 .modal-header {
-    @apply p-5 text-white flex justify-between items-center;
+    @apply p-6 border-b-2 border-brand-input flex justify-between items-center text-white font-bold;
+}
+
+.modal-header-purple {
+    @apply bg-brand-purple;
+}
+
+.modal-header-yellow {
+    @apply bg-brand-yellow text-brand-purple;
+}
+
+.modal-header-dark {
+    @apply bg-brand-dark;
+}
+
+.modal-header-preview {
+    @apply bg-brand-surface text-brand-purple border-b;
+}
+
+.modal-close-btn {
+    @apply text-white/50 hover:text-white transition-colors;
+}
+
+.modal-close-btn-dark {
+    @apply text-brand-gray hover:text-brand-dark;
+}
+
+/* Формы внутри модалок */
+.modal-form {
+    @apply p-6 space-y-5;
 }
 
 .modal-input {
-    @apply w-full p-3.5 border-2 border-brand-input rounded-btn outline-none focus:border-brand-purple-light bg-brand-surface text-sm transition-all;
+    @apply w-full p-4 bg-brand-input border-2 border-transparent rounded-btn outline-none transition-all font-bold text-brand-dark placeholder:text-brand-gray/50;
+    @apply focus:border-brand-purple focus:bg-white;
 }
 
+.modal-checkbox-group {
+    @apply flex items-center gap-3 p-3.5 bg-brand-surface rounded-btn cursor-pointer hover:bg-brand-input transition-colors;
+}
+
+/* Стили превью контента */
+.preview-scroll-area {
+    @apply flex-1 overflow-y-auto p-6 space-y-4;
+}
+
+.preview-question-card {
+    @apply p-4 bg-brand-surface rounded-btn border border-brand-input space-y-3;
+}
+
+.preview-answer-item {
+    @apply p-2.5 rounded-lg border text-xs shadow-sm bg-white border-brand-input text-brand-gray;
+}
+
+.preview-answer-correct {
+    @apply bg-brand-green/10 border-brand-green text-brand-dark font-bold;
+}
+
+/* Кнопки в модалках */
 .btn-modal-primary {
-    @apply w-full bg-brand-purple text-white font-bold py-3.5 rounded-btn hover:bg-brand-purple-light transition-colors;
+    @apply w-full bg-brand-purple text-white font-black py-4 rounded-btn shadow-lg transition-all uppercase tracking-wider flex items-center justify-center gap-2;
+    @apply hover:bg-brand-purple-light;
 }
 
 .btn-modal-yellow {
-    @apply w-full bg-brand-yellow text-brand-purple font-bold py-3.5 rounded-btn hover:bg-brand-yellow-hover transition-all shadow-md;
+    @apply w-full bg-brand-yellow text-brand-purple font-black py-4 rounded-btn shadow-lg transition-all uppercase tracking-wider;
+    @apply hover:bg-brand-yellow-hover hover:scale-[1.02] active:scale-[0.98];
+    box-shadow: 0 4px 0 theme('colors.brand.yellow-shadow');
 }

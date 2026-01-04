@@ -28,4 +28,13 @@ public class Answer {
 
     @Column(name = "is_right")
     private Boolean isRight;
+
+    public Answer copy(Question question) {
+        Answer answer = new Answer();
+        answer.setAnswer(getAnswer());
+        answer.setQuestion(question);
+        answer.setNumber(getNumber());
+        answer.setIsRight(getIsRight());
+        return answer;
+    }
 }

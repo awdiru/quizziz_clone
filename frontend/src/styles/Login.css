@@ -1,40 +1,66 @@
-/* Login.css */
+/* src/styles/Login.css */
+
 .login-container {
     @apply min-h-screen bg-brand-purple flex flex-col items-center justify-center p-4 font-sans;
 }
 
 .login-powered {
-    @apply mb-8 text-white/50 text-sm font-light tracking-widest uppercase;
+    @apply mb-8 text-white/40 text-xs font-black tracking-[0.2em] uppercase;
 }
 
 .login-powered-brand {
-    @apply text-brand-yellow font-bold;
+    @apply text-brand-yellow font-black;
 }
 
 .login-card {
-    @apply bg-white p-8 rounded-quiz shadow-2xl w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500;
+    @apply bg-brand-surface p-10 rounded-quiz shadow-2xl w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-500;
+    @apply border-b-8 border-brand-input;
 }
 
 .login-title {
-    @apply text-3xl font-black text-brand-purple mb-6 text-center tracking-tight;
+    @apply text-3xl font-black text-brand-purple mb-8 text-center tracking-tight uppercase italic;
 }
 
 .login-form {
-    @apply space-y-5;
+    @apply space-y-6;
 }
 
+/* ИСПРАВЛЕНО: убран group из @apply */
 .login-input-group {
     @apply relative;
 }
 
 .login-input-icon {
-    @apply absolute left-4 top-1/2 -translate-y-1/2 text-slate-400;
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-brand-gray transition-colors z-10;
+}
+
+/* Эффект для иконки при фокусе на родительский group */
+.group:focus-within .login-input-icon {
+    @apply text-brand-purple;
 }
 
 .login-input {
-    @apply w-full pl-12 pr-4 py-4 bg-brand-input border-2 border-transparent rounded-btn focus:border-brand-purple focus:bg-white outline-none transition-all font-bold text-brand-dark;
+    @apply w-full pl-12 pr-4 py-4 bg-brand-input border-2 border-transparent rounded-btn outline-none transition-all font-bold text-brand-dark placeholder:text-brand-gray/40;
+    @apply focus:border-brand-purple focus:bg-white focus:ring-4 ring-brand-purple-light/10;
 }
 
 .login-button {
-    @apply w-full bg-brand-purple hover:bg-brand-purple-light text-white font-bold py-4 rounded-btn transition-all flex items-center justify-center shadow-btn-purple active:shadow-none active:translate-y-1;
+    @apply w-full bg-brand-yellow text-brand-purple font-black py-4 rounded-btn text-xl shadow-btn-yellow transition-all flex items-center justify-center gap-2;
+    @apply hover:bg-brand-yellow-hover hover:scale-[1.01] active:shadow-none active:translate-y-[6px];
+}
+
+.login-button:disabled {
+    @apply opacity-70 cursor-not-allowed shadow-none translate-y-0 bg-brand-gray/30;
+}
+
+.login-loader {
+    @apply animate-spin w-6 h-6;
+}
+
+.login-footer {
+    @apply mt-8 text-center text-brand-gray font-bold;
+}
+
+.login-link {
+    @apply text-brand-purple hover:text-brand-purple-light underline underline-offset-4 decoration-2 decoration-brand-yellow transition-colors ml-1;
 }

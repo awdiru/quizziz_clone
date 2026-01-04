@@ -1,15 +1,30 @@
 .confirm-container {
-    /* Используем твой brand-purple из конфига */
-    @apply min-h-screen bg-brand-purple flex items-center justify-center p-4;
+    @apply min-h-screen bg-brand-purple flex items-center justify-center p-4 font-sans;
 }
 
 .confirm-card {
-    /* Используем rounded-quiz (2.5rem) из конфига */
-    @apply bg-white p-8 md:p-12 rounded-quiz shadow-2xl w-full max-w-md text-center animate-in fade-in zoom-in duration-300 border-b-8 border-gray-100;
+    @apply bg-white p-8 md:p-12 rounded-quiz shadow-2xl w-full max-w-md text-center animate-in fade-in zoom-in duration-300;
+    @apply border-b-8 border-brand-input;
+}
+
+.confirm-content-stack {
+    @apply space-y-6;
 }
 
 .confirm-icon-wrapper {
     @apply flex justify-center mb-8 transform hover:scale-110 transition-transform duration-300;
+}
+
+.icon-loading {
+    @apply text-brand-purple-light animate-spin;
+}
+
+.icon-success {
+    @apply text-brand-green animate-bounce;
+}
+
+.icon-error {
+    @apply text-brand-red;
 }
 
 .confirm-title {
@@ -17,29 +32,31 @@
 }
 
 .confirm-subtitle {
-    @apply text-slate-500 font-medium text-lg mb-8 leading-relaxed;
+    @apply text-brand-gray font-medium text-lg mb-8 leading-relaxed;
 }
 
-/* Стили для плашек сообщений */
 .status-box {
-    @apply p-6 rounded-2xl border-2 mb-8 font-bold text-lg flex items-center justify-center gap-3 shadow-sm;
+    @apply p-6 rounded-btn border-2 mb-8 font-bold text-lg flex items-center justify-center gap-3 shadow-sm;
 }
 
 .status-box-success {
-    @apply bg-green-50 border-green-100;
-    color: theme('colors.brand.green');
+    @apply bg-green-50 border-green-100 text-brand-green;
 }
 
 .status-box-error {
-    @apply bg-red-50 border-red-100;
-    color: theme('colors.brand.red');
+    @apply bg-red-50 border-red-100 text-brand-red;
 }
 
-/* Кнопки */
 .confirm-btn-primary {
-    @apply w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-95 text-lg uppercase tracking-wide;
+    @apply w-full bg-brand-purple text-white font-black py-4 rounded-btn shadow-lg transition-all flex items-center justify-center gap-2;
+    @apply hover:bg-brand-purple-light hover:scale-[1.02] active:scale-[0.98];
 }
 
 .confirm-btn-secondary {
-    @apply w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-4 rounded-2xl transition-all active:scale-95 mt-4 text-lg;
+    @apply w-full bg-brand-input text-brand-gray font-black py-4 rounded-btn transition-all;
+    @apply hover:bg-slate-200 hover:text-brand-dark;
+}
+
+.confirm-loader {
+    @apply animate-spin text-brand-purple mx-auto;
 }

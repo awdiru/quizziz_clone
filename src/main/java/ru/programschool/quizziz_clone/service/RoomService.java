@@ -216,7 +216,6 @@ public class RoomService {
     }
 
     private String generateUniquePin() {
-        Random random = new Random();
         String pin;
         do {
             pin = RandomStringGenerator.generateRandomString(5);

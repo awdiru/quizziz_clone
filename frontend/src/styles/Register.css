@@ -1,22 +1,25 @@
-/* Register.css */
+/* src/styles/Register.css */
+
 .register-container {
     @apply min-h-screen bg-brand-purple flex items-center justify-center p-4 font-sans;
 }
 
 .register-card {
-    @apply bg-white w-full max-w-md p-8 rounded-quiz shadow-2xl relative animate-in fade-in zoom-in duration-300;
+    @apply bg-brand-surface w-full max-w-md p-10 rounded-quiz shadow-2xl relative animate-in fade-in zoom-in duration-300;
+    @apply border-b-8 border-brand-input;
 }
 
 .register-back-button {
-    @apply absolute top-6 left-6 text-slate-400 hover:text-brand-purple transition-colors flex items-center gap-1 text-sm font-bold;
+    @apply absolute top-6 left-6 text-brand-gray hover:text-brand-purple transition-all flex items-center gap-1 text-sm font-black uppercase tracking-wider;
 }
 
 .register-header {
-    @apply text-center mb-8 mt-4;
+    @apply text-center mb-8 mt-6;
 }
 
 .register-icon-wrapper {
     @apply bg-brand-yellow w-16 h-16 rounded-btn flex items-center justify-center mx-auto mb-4 rotate-3 shadow-lg;
+    animation: float 3s ease-in-out infinite;
 }
 
 .register-icon {
@@ -24,29 +27,74 @@
 }
 
 .register-title {
-    @apply text-3xl font-black text-brand-purple tracking-tight;
+    @apply text-3xl font-black text-brand-purple tracking-tight uppercase italic;
 }
 
 .register-subtitle {
-    @apply text-brand-gray font-medium;
+    @apply text-brand-gray font-bold text-sm;
 }
 
 .register-form {
     @apply space-y-4;
 }
 
+/* Группы ввода */
 .register-input-group {
     @apply relative;
 }
 
 .register-input-icon {
-    @apply absolute left-4 top-1/2 -translate-y-1/2 text-slate-400;
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-brand-gray transition-colors z-10;
+}
+
+.register-input-group.group:focus-within .register-input-icon {
+    @apply text-brand-purple;
 }
 
 .register-input {
-    @apply w-full pl-12 pr-4 py-4 bg-brand-input border-2 border-transparent rounded-btn focus:border-brand-purple focus:bg-white outline-none transition-all font-bold text-brand-dark;
+    @apply w-full pl-12 pr-4 py-4 bg-brand-input border-2 border-transparent rounded-btn outline-none transition-all font-bold text-brand-dark placeholder:text-brand-gray/40;
+    @apply focus:border-brand-purple focus:bg-white focus:ring-4 ring-brand-purple-light/10;
 }
 
-.register-button {
-    @apply w-full bg-brand-yellow hover:bg-brand-yellow-hover text-brand-purple font-black py-4 rounded-btn transition-all shadow-btn-yellow active:shadow-none active:translate-y-1 flex items-center justify-center gap-2 mt-2;
+.register-submit-button {
+    @apply w-full bg-brand-yellow text-brand-purple font-black py-4 rounded-btn text-xl shadow-btn-yellow transition-all flex items-center justify-center gap-2;
+    @apply hover:bg-brand-yellow-hover hover:scale-[1.01] active:shadow-none active:translate-y-[6px];
+}
+
+.register-submit-button:disabled {
+    @apply opacity-70 cursor-not-allowed shadow-none translate-y-0 bg-brand-gray/30;
+}
+
+.register-loader {
+    @apply animate-spin text-brand-purple w-6 h-6;
+}
+
+.register-footer {
+    @apply mt-8 text-center text-brand-dark font-bold text-sm;
+}
+
+.register-link {
+    @apply text-brand-purple font-black ml-1 transition-colors border-b-2 border-brand-yellow hover:text-brand-purple-light;
+}
+
+/* Состояние успеха */
+.register-success-card {
+    @apply text-center flex flex-col items-center py-6;
+}
+
+.register-success-icon {
+    @apply text-brand-green mb-6 animate-bounce;
+}
+
+.register-success-title {
+    @apply text-2xl font-black text-brand-purple uppercase mb-2;
+}
+
+.register-success-desc {
+    @apply text-brand-gray font-bold mb-8 leading-relaxed;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(3deg); }
+    50% { transform: translateY(-10px) rotate(-3deg); }
 }

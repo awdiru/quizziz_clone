@@ -29,7 +29,7 @@ public class FileSystemService {
                 .type(ElementType.DIRECTORY)
                 .build();
 
-        return toDto(elementRepository.save(dir), owner);
+        return toElementDto(elementRepository.save(dir), owner);
     }
 
     @Transactional
@@ -44,7 +44,7 @@ public class FileSystemService {
                 .type(ElementType.FILE)
                 .build();
 
-        return toDto(elementRepository.save(test), owner);
+        return toElementDto(elementRepository.save(test), owner);
     }
 
     @Transactional
@@ -71,7 +71,7 @@ public class FileSystemService {
         }
 
         return elements.stream()
-                .map(e -> toDto(e, user))
+                .map(e -> toElementDto(e, user))
                 .toList();
     }
 
@@ -100,6 +100,33 @@ public class FileSystemService {
         return false;
     }
 
+    @Transactional
+    public ElementDto copyElement(Long id, String name, User user) {
+        Element element = elementRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Элемент не найден"));
+
+        if (!hasAccess(element, user, false))
+            throw new AccessDeniedException("У вас нет прав на копирование этого элемента");
+
+        String uniqueName = generateUniqueName(name, element.getParent(), element.getType());
+
+        Element copyElement = element.copy(user, uniqueName, element.getParent());
+        Element copyElementSaved = elementRepository.save(copyElement);
+
+        return toElementDto(copyElementSaved, user);
+    }
+
+    private String generateUniqueName(String baseName, Element parent, ElementType type) {
+        String currentName = baseName;
+        int count = 1;
+
+        while (elementRepository.existsByNameAndParentAndType(currentName, parent, type)) {
+            currentName = baseName + " (" + count + ")";
+            count++;
+        }
+        return currentName;
+    }
+
     private Element getElementWithPermissionCheck(Long id, User user, boolean writeRequired) {
         Element element = elementRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Элемент с ID " + id + " не найден"));
@@ -109,7 +136,7 @@ public class FileSystemService {
         throw new AccessDeniedException("У вас нет прав доступа к этому элементу");
     }
 
-    public ElementDto toDto(Element element, User currentUser) {
+    public ElementDto toElementDto(Element element, User currentUser) {
         return ElementDto.builder()
                 .id(element.getId())
                 .name(element.getName())

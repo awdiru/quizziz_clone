@@ -92,4 +92,11 @@ public class FileSystemController extends BaseController {
         fileSystemService.deleteElement(id, user);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "Скопировать элемент", description = "Возвращает скопированный элемент")
+    @PostMapping("/{id}/copy")
+    public ResponseEntity<?> copyTest(@PathVariable Long id, @RequestParam String name, Principal principal) {
+        User user = getUserFromPrincipal(principal);
+        return ResponseEntity.ok(fileSystemService.copyElement(id, name, user));
+    }
 }

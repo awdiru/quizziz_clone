@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.programschool.quizziz_clone.model.entity.postgrsql.Element;
+import ru.programschool.quizziz_clone.model.entity.postgrsql.ElementType;
 import ru.programschool.quizziz_clone.model.entity.postgrsql.User;
 
 import java.util.List;
@@ -48,4 +49,14 @@ public interface ElementRepository extends JpaRepository<Element, Long> {
      * @return список элементов
      */
     List<Element> findByParentId(Long parentId);
+
+    /**
+     * Проверка наличия в данной директории элемента с таким же именем и типом
+     *
+     * @param name   имя
+     * @param parent данная директория
+     * @param type   тип элемента
+     * @return true - такой элемент существует, false - такого элемента нет
+     */
+    boolean existsByNameAndParentAndType(String name, Element parent, ElementType type);
 }

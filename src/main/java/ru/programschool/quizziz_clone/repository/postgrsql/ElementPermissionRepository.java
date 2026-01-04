@@ -3,6 +3,7 @@ package ru.programschool.quizziz_clone.repository.postgrsql;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.programschool.quizziz_clone.model.entity.postgrsql.ElementPermission;
+import ru.programschool.quizziz_clone.model.entity.postgrsql.ElementType;
 
 import java.util.Optional;
 

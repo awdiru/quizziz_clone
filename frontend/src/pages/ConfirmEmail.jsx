@@ -38,9 +38,9 @@ const ConfirmEmail = () => {
             <div className="confirm-card">
 
                 {status === 'loading' && (
-                    <div className="space-y-6">
+                    <div className="confirm-content-stack">
                         <div className="confirm-icon-wrapper">
-                            <Loader2 size={64} className="text-purple-600 animate-spin" />
+                            <Loader2 size={64} className="icon-loading" />
                         </div>
                         <h2 className="confirm-title">Ждем ответа</h2>
                         <p className="confirm-subtitle">Связываемся с сервером...</p>
@@ -48,9 +48,9 @@ const ConfirmEmail = () => {
                 )}
 
                 {status === 'success' && (
-                    <div className="space-y-6">
+                    <div className="confirm-content-stack">
                         <div className="confirm-icon-wrapper">
-                            <CheckCircle2 size={80} style={{ color: '#45da0d' }} className="animate-bounce" />
+                            <CheckCircle2 size={80} className="icon-success" />
                         </div>
                         <div className="status-box status-box-success">
                             <p>{message}</p>
@@ -63,9 +63,9 @@ const ConfirmEmail = () => {
                 )}
 
                 {status === 'error' && (
-                    <div className="space-y-6">
+                    <div className="confirm-content-stack">
                         <div className="confirm-icon-wrapper">
-                            <XCircle size={80} style={{ color: '#b60000' }} />
+                            <XCircle size={80} className="icon-error" />
                         </div>
                         <div className="status-box status-box-error">
                             <p>{message}</p>
@@ -75,6 +75,7 @@ const ConfirmEmail = () => {
                         </button>
                     </div>
                 )}
+
             </div>
         </div>
     );

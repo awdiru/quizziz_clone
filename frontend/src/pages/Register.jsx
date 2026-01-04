@@ -28,16 +28,20 @@ const Register = () => {
     if (status === 'success') {
         return (
             <div className="register-container">
-                <div className="register-success-card">
-                    <CheckCircle className="register-success-icon" size={64} />
-                    <h2 className="text-2xl font-bold text-brand-purple mb-2">Заявка отправлена!</h2>
-                    <p className="text-gray-600 mb-6">Администратор проверит ваши данные и подтвердит регистрацию.</p>
-                    <button
-                        onClick={() => navigate('/login')}
-                        className="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 transition-all"
-                    >
-                        Вернуться на главную
-                    </button>
+                <div className="register-card">
+                    <div className="register-success-card">
+                        <CheckCircle className="register-success-icon" size={80} />
+                        <h2 className="register-success-title">Заявка принята!</h2>
+                        <p className="register-success-desc">
+                            Мы отправили письмо на почту администратора. Пожалуйста, дождитесь, пока администратор подтвердит вашу регистрацию.
+                        </p>
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="register-submit-button"
+                        >
+                            ПОНЯТНО
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -50,19 +54,20 @@ const Register = () => {
                     onClick={() => navigate('/login')}
                     className="register-back-button"
                 >
-                    <ArrowLeft size={18} /> Назад
+                    <ArrowLeft size={18} />
+                    Назад
                 </button>
 
                 <div className="register-header">
                     <div className="register-icon-wrapper">
                         <UserPlus className="register-icon" size={32} />
                     </div>
-                    <h1 className="register-title">Регистрация</h1>
-                    <p className="register-subtitle">Станьте частью ProgramSchool</p>
+                    <h2 className="register-title">Регистрация</h2>
+                    <p className="register-subtitle">Создайте аккаунт учителя</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="register-form">
-                    <div className="register-input-group">
+                    <div className="register-input-group group">
                         <User className="register-input-icon" size={20} />
                         <input
                             type="text"
@@ -73,7 +78,7 @@ const Register = () => {
                         />
                     </div>
 
-                    <div className="register-input-group">
+                    <div className="register-input-group group">
                         <Mail className="register-input-icon" size={20} />
                         <input
                             type="email"
@@ -84,11 +89,11 @@ const Register = () => {
                         />
                     </div>
 
-                    <div className="register-input-group">
+                    <div className="register-input-group group">
                         <Lock className="register-input-icon" size={20} />
                         <input
                             type="password"
-                            placeholder="Придумайте пароль"
+                            placeholder="Надежный пароль"
                             className="register-input"
                             onChange={(e) => setFormData({...formData, password: e.target.value})}
                             required
@@ -104,15 +109,15 @@ const Register = () => {
                             <Loader2 className="register-loader" />
                         ) : (
                             <>
-                                <UserPlus size={20}/>
-                                <span>Отправить заявку</span>
+                                <UserPlus size={22}/>
+                                <span>СОЗДАТЬ АККАУНТ</span>
                             </>
                         )}
                     </button>
                 </form>
 
                 <p className="register-footer">
-                    Уже есть аккаунт?{' '}
+                    Уже есть аккаунт?
                     <button
                         onClick={() => navigate('/login')}
                         className="register-link"

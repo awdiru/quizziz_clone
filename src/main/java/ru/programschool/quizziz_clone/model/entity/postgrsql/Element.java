@@ -46,4 +46,6 @@ public abstract class Element {
 
     @OneToMany(mappedBy = "element", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ElementPermission> permissions = new ArrayList<>();
+
+    public abstract Element copy(User user, String newName, Element parent);
 }
