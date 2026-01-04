@@ -45,6 +45,7 @@ public class Room implements Serializable {
     public static class Participant implements Serializable {
         private String name;
         private int score;
+        private boolean answered;
         private Long lastAnswerTimestamp;
     }
 }

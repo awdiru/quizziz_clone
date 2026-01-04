@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useEffect, useRef, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import SockJS from 'sockjs-client';
-import { Client } from '@stomp/stompjs';
-import { QRCodeSVG } from 'qrcode.react';
+import {Client} from '@stomp/stompjs';
+import {QRCodeSVG} from 'qrcode.react';
 import api from '../api/axios';
-import { Users, Play, Loader2, ArrowLeft, Crown, SkipForward, Home } from 'lucide-react';
+import {ArrowLeft, Crown, Home, Loader2, Play, SkipForward, Users} from 'lucide-react';
+import {WS_URL} from "../config";
 
 const TeacherArena = () => {
     const { pin } = useParams();
@@ -14,15 +15,63 @@ const TeacherArena = () => {
     const [currentQuestion, setCurrentQuestion] = useState(null);
     const [isFinished, setIsFinished] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [deltas, setDeltas] = useState({});
+    const prevParticipantsRef = useRef([]);
+    const currentQuestionNumberRef = useRef(-1);
 
     useEffect(() => {
         const client = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws-quiz'),
+            webSocketFactory: () => new SockJS(`${WS_URL}`),
             onConnect: () => {
-                client.subscribe(`/topic/room/${pin}`, (m) => setParticipants(JSON.parse(m.body)));
+                // Подписка на участников в лобби
+                client.subscribe(`/topic/room/${pin}`, (m) => {
+                    const data = JSON.parse(m.body);
+                    setParticipants(data);
+
+                    const newDeltas = new Map();
+                    participants.forEach(p => newDeltas.set(p, 0))
+                    setDeltas(newDeltas);
+                    prevParticipantsRef.current = data;
+                });
+
+                // Подписка на вопросы
                 client.subscribe(`/topic/room/${pin}/question`, (m) => {
-                    setCurrentQuestion(JSON.parse(m.body));
+                    const questionData = JSON.parse(m.body);
+
+                    if (questionData.currentQuestionNumber !== currentQuestionNumberRef.current) {
+                        setParticipants(current => {
+                            prevParticipantsRef.current = current;
+                            return current;
+                        });
+
+                        setDeltas({});
+                        currentQuestionNumberRef.current = questionData.currentQuestionNumber;
+                    }
+
+                    setCurrentQuestion(questionData);
                     setIsFinished(false);
+                });
+
+                // Подписка на лидерборд
+                client.subscribe(`/topic/room/${pin}/leaderboard`, (m) => {
+                    const newData = JSON.parse(m.body);
+
+                    setDeltas(prevDeltas => {
+                        const updatedDeltas = { ...prevDeltas };
+                        newData.forEach(player => {
+                            if (player.answered) {
+                                const basePlayer = prevParticipantsRef.current.find(p => p.name === player.name);
+                                if (basePlayer) {
+                                    updatedDeltas[player.name] = player.score - basePlayer.score;
+                                } else {
+                                    updatedDeltas[player.name] = 0;
+                                }
+                            }
+                        });
+                        return updatedDeltas;
+                    });
+
+                    setParticipants(newData);
                 });
             }
         });
@@ -46,6 +95,15 @@ const TeacherArena = () => {
         } catch (e) { alert("Ошибка!"); }
         finally { setLoading(false); }
     };
+
+    const getGridConfig = (count) => {
+        if (count <= 4) return { cols: count, width: 'max-w-4xl' };
+        if (count <= 8) return { cols: 4, width: 'max-w-5xl' };
+        if (count <= 12) return { cols: 6, width: 'max-w-6xl' };
+        return { cols: 8, width: 'max-w-full' };
+    };
+
+    const { cols, width } = getGridConfig(participants.length);
 
     // --- ЭКРАН 3: ИТОГИ (БЕЗ КОДА И ЛИШНИХ КНОПОК) ---
     if (isFinished) {
@@ -97,21 +155,53 @@ const TeacherArena = () => {
                     </div>
                 </div>
 
-                <div className="mt-12 bg-black/20 rounded-3xl p-6">
-                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <div className={`w-full ${width} mx-auto mb-12`}>
+                    <div className="grid gap-5" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+                        {/* Карточки игроков */}
                         {participants.map((p, i) => (
-                            <div key={i} className="bg-white/5 p-3 rounded-xl flex justify-between">
-                                <span className="truncate">{p.name}</span>
-                                <span className="text-yellow-400 font-black">{p.score}</span>
+                            <div key={i}
+                                 className="bg-white/20 backdrop-blur-sm p-6 rounded-3xl border border-white/10 flex flex-col items-center justify-center transition-all">
+                                <span className="text-yellow-500 text-xl font-black uppercase mb-3 tracking-wide text-center truncate w-full">{p.name}</span>
+                                {/* Контейнер для счета и дельты */}
+                                <div className="flex items-start">
+                                    <div className="relative">
+                                        <span className="text-3xl font-black text-white leading-none">{p.score}</span>
+
+                                        {/* Отображаем дельту, если она есть в объекте (даже если она 0) */}
+                                        {deltas[p.name] !== undefined && (
+                                            <span
+                                                className="absolute left-full -top-3 ml-1 text-xl font-bold text-yellow-400 whitespace-nowrap animate-in fade-in slide-in-from-bottom-1"
+                                                style={{
+                                                    fontFamily: '"Comic Sans MS", "Comic Sans", cursive',
+                                                    textShadow: '1.5px 1.5px 0px rgba(0,0,0,0.3)'
+                                                }}
+                                            >{/* Показываем +0, +10 и т.д. */}
+                                                {deltas[p.name] >= 0 ? `+${deltas[p.name]}` : deltas[p.name]}
+                                             </span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         ))}
+
+                        {/* КНОПКА УПРАВЛЕНИЯ (Всегда в последней колонке) */}
+                        <button
+                            onClick={handleAction}
+                            disabled={loading}
+                            style={{ gridColumnStart: cols }}
+                            className={`p-6 rounded-3xl transition-all flex flex-col items-center justify-center gap-2 active:scale-95 shadow-lg
+                            ${isLast
+                                ? 'bg-red-500 hover:bg-red-600 text-white'
+                                : 'bg-yellow-400 hover:bg-yellow-500 text-purple-900'
+                            }`}
+                        >
+                            <div className="transition-transform group-hover:scale-110">
+                                {loading ? <Loader2 className="animate-spin" /> : <SkipForward size={32} fill="currentColor" />}
+                            </div>
+                            <span className="font-black text-center leading-tight uppercase text-lg">{isLast ? 'Завершить' : 'Далее'}</span>
+                        </button>
                     </div>
                 </div>
-
-                <button onClick={handleAction} className={`fixed bottom-8 right-8 px-10 py-5 rounded-2xl font-black flex items-center gap-3 shadow-2xl transition-all ${isLast ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-yellow-400 hover:bg-yellow-500 text-purple-900'}`}>
-                    {loading ? <Loader2 className="animate-spin" /> : <SkipForward size={24} fill="currentColor" />}
-                    {isLast ? 'ЗАВЕРШИТЬ ТЕСТ' : 'СЛЕДУЮЩИЙ ВОПРОС'}
-                </button>
             </div>
         );
     }

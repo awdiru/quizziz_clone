@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { Client } from '@stomp/stompjs';
+import React, {useEffect, useRef, useState} from 'react';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {Client} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { Trophy, Home, Star, Award } from 'lucide-react';
+import {Home, Star, Trophy} from 'lucide-react';
+import {WS_URL} from "../config";
 
 const StudentArena = () => {
     const { pin } = useParams();
@@ -25,7 +26,7 @@ const StudentArena = () => {
         localStorage.setItem(`player_name_${pin}`, playerName);
 
         const client = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws-quiz'),
+            webSocketFactory: () => new SockJS(`${WS_URL}`),
             onConnect: () => {
                 stompClient.current = client;
 
@@ -40,7 +41,7 @@ const StudentArena = () => {
 
                 // 2. Подписка на завершение (результаты)
                 // Предполагаем, что сервер шлет List<Participant> в этот топик при финише
-                client.subscribe(`/topic/room/${pin}/finish`, (message) => {
+                client.subscribe(`/topic/room/${pin}/finished`, (message) => {
                     const finalResults = JSON.parse(message.body);
                     setResults(finalResults);
                     setIsFinished(true);

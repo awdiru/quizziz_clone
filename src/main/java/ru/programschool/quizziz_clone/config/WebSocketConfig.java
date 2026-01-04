@@ -1,5 +1,6 @@
 package ru.programschool.quizziz_clone.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -9,6 +10,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    @Value("${app.cors.allowed-origins}")
+    private String FRONTEND_ADDRESS;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -22,7 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Точка подключения к WebSocket
         registry.addEndpoint("/ws-quiz")
-                .setAllowedOrigins("http://localhost:3000")
+                .setAllowedOrigins(FRONTEND_ADDRESS)
                 .withSockJS();
     }
 }

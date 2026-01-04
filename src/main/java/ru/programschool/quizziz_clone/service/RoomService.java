@@ -56,14 +56,11 @@ public class RoomService {
 
         if (nameExists) throw new IllegalArgumentException("Имя " + request.getName() + " уже занято в этой комнате");
 
-        Room.Participant newPlayer = new Room.Participant(request.getName(), 0, null);
+        Room.Participant newPlayer = new Room.Participant(request.getName(), 0, false, null);
         room.getParticipants().add(newPlayer);
         roomRepository.save(room);
 
-        // ОТПРАВКА СООБЩЕНИЯ В WEBSOCKET
-        // Все, кто подписан на /topic/room/{pin}, получат обновленный список участников
         messagingTemplate.convertAndSend("/topic/room/" + room.getId(), room.getParticipants());
-
         return new JoinRoomResponse(room.getId(), request.getName(), "Успешное подключение");
     }
 
@@ -85,8 +82,9 @@ public class RoomService {
 
         room.setCurrentQuestionIndex(0);
         room.setStatus(Room.RoomStatus.IN_PROGRESS);
-        roomRepository.save(room);
+        room.setCurrentQuestionStartTime(System.currentTimeMillis());
 
+        roomRepository.save(room);
         sendQuestion(room, test);
     }
 
@@ -105,15 +103,14 @@ public class RoomService {
 
         int nextIndex = room.getCurrentQuestionIndex() + 1;
 
-        // Проверяем, не закончились ли вопросы
         if (nextIndex >= test.getQuestions().size())
             throw new IllegalStateException("Вопросы закончились. Завершите тест.");
 
         room.setCurrentQuestionIndex(nextIndex);
         room.setCurrentQuestionStartTime(System.currentTimeMillis());
-        roomRepository.save(room);
+        room.getParticipants().forEach(participant -> {participant.setAnswered(false);});
 
-        // Отправляем новый вопрос всем участникам
+        roomRepository.save(room);
         sendQuestion(room, test);
     }
 
@@ -163,6 +160,7 @@ public class RoomService {
 
         participant.setScore(participant.getScore() + score);
         participant.setLastAnswerTimestamp(System.currentTimeMillis());
+        participant.setAnswered(true);
 
         roomRepository.save(room);
 
