@@ -72,10 +72,9 @@ const StudentArena = () => {
     };
 
     if (isFinished) {
-        const finalData = results[results.length - 1] || {};
-        const score = finalData.score || 0;
-
         const playerIndex = results.findIndex(r => r.name === playerName);
+        const finalData = results[playerIndex] || {};
+        const score = finalData.score || 0;
         const rank = playerIndex !== -1 ? playerIndex + 1 : '-';
 
         return (
