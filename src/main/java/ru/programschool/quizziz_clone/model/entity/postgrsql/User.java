@@ -3,6 +3,8 @@ package ru.programschool.quizziz_clone.model.entity.postgrsql;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -28,4 +30,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.TEACHER;
+
+    private LocalDateTime registerDate = LocalDateTime.now();
 }
