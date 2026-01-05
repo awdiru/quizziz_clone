@@ -50,6 +50,11 @@ const Dashboard = () => {
 
     const canEditCurrentFolder = currentFolderId === null || (currentPath.length > 0 && currentPath[currentPath.length - 1].canEdit);
 
+    //Управление результатами поиска и процессом загрузки
+    const [searchResults, setSearchResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+
     useEffect(() => {
         if (location.state?.folderId !== undefined) setCurrentFolderId(location.state.folderId);
         if (location.state?.path) setCurrentPath(location.state.path);
@@ -74,6 +79,33 @@ const Dashboard = () => {
     useEffect(() => {
         fetchElements(currentFolderId);
     }, [currentFolderId]);
+
+    useEffect(() => {
+        // Если поле пустое, очищаем список
+        if (shareEmail.length < 2) {
+            setSearchResults([]);
+            setShowDropdown(false);
+            return;
+        }
+
+        // Устанавливаем таймер на 800мс (или 1 секунду, как вы просили)
+        const delayDebounceFn = setTimeout(async () => {
+            setIsSearching(true);
+            try {
+                const response = await api.get(`/user/search`, {
+                    params: { query: shareEmail }
+                });
+                setSearchResults(response.data);
+                setShowDropdown(response.data.length > 0);
+            } catch (err) {
+                console.error("Ошибка при поиске пользователей:", err);
+            } finally {
+                setIsSearching(false);
+            }
+        }, 1000);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [shareEmail]);
 
     const formatDate = (dateString) => {
         if (!dateString) return '—';
@@ -255,7 +287,6 @@ const Dashboard = () => {
                 {/* Сетка элементов */}
                 <div className="elements-grid">
                     {elements.map((item) => (
-                        /* Исправлено: добавил group сюда */
                         <div key={item.id} className="element-card group">
                             {!item.canEdit && (
                                 <div className="lock-badge" title="Только чтение">
@@ -268,7 +299,7 @@ const Dashboard = () => {
                                 <div className={`element-icon-wrapper ${item.type === 'DIRECTORY' ? 'icon-folder' : 'icon-test'}`}>
                                     {item.type === 'DIRECTORY' ? <Folder size={22}/> : <FileText size={22}/>}
                                 </div>
-                                <div className="truncate flex-1">
+                                <div className="element-text-content">
                                     <h3 className="element-title">{item.name}</h3>
                                     {!item.isOwner && (
                                         <div className="element-owner-info">
@@ -331,10 +362,14 @@ const Dashboard = () => {
                             <div className="modal-header modal-header-preview">
                                 <div>
                                     <h2 className="text-xl font-bold text-brand-purple">{selectedElement?.name}</h2>
-                                    <p className="text-xs text-brand-gray font-medium flex items-center gap-1 mt-1">
-                                        {!selectedElement?.isOwner && <><User size={12}/> Владелец: {selectedElement?.ownerName}</>}
-                                        {!selectedElement?.canEdit && <span className="ml-2 text-brand-red font-bold uppercase text-[9px] bg-red-50 px-2 py-0.5 rounded">Только чтение</span>}
-                                    </p>
+                                    <div className="mt-1 flex items-center">
+                                        {!selectedElement?.isOwner && (
+                                            <span className="badge-owner">
+                                                <User size={12}/> Владелец: {selectedElement?.ownerName}
+                                            </span>
+                                        )}
+                                        {!selectedElement?.canEdit && <span className="badge-readonly">Только чтение</span>}
+                                    </div>
                                 </div>
                                 <button onClick={() => { setIsPreviewModalOpen(false); setPreviewTest(null) }} className="modal-close-btn-dark"><X size={24}/></button>
                             </div>
@@ -342,8 +377,8 @@ const Dashboard = () => {
                                 {previewTest ? (
                                     previewTest.questions.map((q, i) => (
                                         <div key={i} className="preview-question-card">
-                                            <p className="font-bold text-brand-dark text-sm">{i + 1}. {q.questionText}</p>
-                                            <div className="grid grid-cols-1 gap-1.5">
+                                            <p className="preview-question-text">{i + 1}. {q.questionText}</p>
+                                            <div className="preview-answers-grid">
                                                 {q.answers.map((a, j) => (
                                                     <div key={j} className={`preview-answer-item ${a.isRight ? 'preview-answer-correct' : ''}`}>
                                                         {a.answerText}
@@ -352,9 +387,14 @@ const Dashboard = () => {
                                             </div>
                                         </div>
                                     ))
-                                ) : <div className="text-center py-10 text-brand-gray animate-pulse text-sm">Загрузка вопросов...</div>}
+                                ) : (
+                                    <div className="preview-loading">
+                                        <div className="spinner-brand"></div>
+                                        <span className="text-xs font-bold">Загрузка вопросов...</span>
+                                    </div>
+                                )}
                             </div>
-                            <div className="p-4 border-t bg-white flex justify-end">
+                            <div className="preview-footer">
                                 <button
                                     disabled={!selectedElement?.canEdit}
                                     onClick={() => navigate(`/editor/${selectedElement.id}`, { state: { returnFolderId: currentFolderId, returnPath: currentPath } })}
@@ -416,24 +456,77 @@ const Dashboard = () => {
                     </div>
                 )}
 
-                {/* Доступ */}
+                {/* Доступ (Share) */}
                 {isShareModalOpen && (
-                    <div className="modal-overlay z-[100]">
-                        <div className="modal-content">
-                            <div className="modal-header modal-header-purple">
+                    <div className="modal-overlay modal-overlay-high-z">
+                        <div className="modal-content modal-content-visible">
+                            <div className="modal-header modal-header-purple modal-header-rounded-fix">
                                 <div className="flex items-center gap-2">
                                     <UserPlus size={20} className="text-brand-yellow"/>
-                                    <h2 className="text-lg font-bold">Доступ</h2>
+                                    <h2 className="text-lg font-bold uppercase tracking-tight">Доступ</h2>
                                 </div>
-                                <button onClick={() => setIsShareModalOpen(false)} className="modal-close-btn"><X size={20}/></button>
+                                <button
+                                    onClick={() => {
+                                        setIsShareModalOpen(false);
+                                        setSearchResults([]);
+                                        setShowDropdown(false);
+                                    }}
+                                    className="modal-close-btn"
+                                >
+                                    <X size={20}/>
+                                </button>
                             </div>
+
                             <form onSubmit={handleShare} className="modal-form">
-                                <input className="modal-input" type="email" placeholder="Email коллеги" value={shareEmail} onChange={(e) => setShareEmail(e.target.value)} required/>
+                                <div className="search-container">
+                                    <input
+                                        className="modal-input"
+                                        type="text"
+                                        placeholder="Имя или email коллеги..."
+                                        value={shareEmail}
+                                        onChange={(e) => setShareEmail(e.target.value)}
+                                        autoComplete="off"
+                                        required
+                                    />
+
+                                    {isSearching && (
+                                        <div className="search-loader">
+                                            <div className="spinner-brand"></div>
+                                        </div>
+                                    )}
+
+                                    {showDropdown && (
+                                        <div className="search-dropdown">
+                                            {searchResults.map((user, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="search-result-item"
+                                                    onClick={() => {
+                                                        setShareEmail(user.email);
+                                                        setShowDropdown(false);
+                                                    }}
+                                                >
+                                                    <span className="search-result-name">{user.username}</span>
+                                                    <span className="search-result-email">{user.email}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
                                 <label className="modal-checkbox-group">
-                                    <input type="checkbox" className="w-4 h-4 accent-brand-purple" checked={canEdit} onChange={(e) => setCanEdit(e.target.checked)}/>
+                                    <input
+                                        type="checkbox"
+                                        className="checkbox-brand"
+                                        checked={canEdit}
+                                        onChange={(e) => setCanEdit(e.target.checked)}
+                                    />
                                     <span className="text-brand-dark font-bold text-sm">Разрешить редактирование</span>
                                 </label>
-                                <button type="submit" className="btn-modal-yellow">ОТКРЫТЬ ДОСТУП</button>
+
+                                <button type="submit" className="btn-modal-yellow">
+                                    ОТКРЫТЬ ДОСТУП
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -448,7 +541,7 @@ const Dashboard = () => {
                                 <button onClick={() => setIsCopyModalOpen(false)} className="modal-close-btn"><X size={20}/></button>
                             </div>
                             <form onSubmit={handleCopy} className="modal-form">
-                                <p className="text-xs text-brand-gray mb-1 px-1">Введите новое имя для копии:</p>
+                                <p className="text-xs text-brand-gray mb-1 px-1 font-bold">Введите новое имя для копии:</p>
                                 <input
                                     autoFocus
                                     className="modal-input"
@@ -458,7 +551,7 @@ const Dashboard = () => {
                                 />
                                 <button
                                     type="submit"
-                                    className="btn-modal-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="btn-modal-primary"
                                 >
                                     Копировать
                                 </button>

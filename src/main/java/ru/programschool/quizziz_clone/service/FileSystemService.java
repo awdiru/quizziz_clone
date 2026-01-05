@@ -22,7 +22,7 @@ public class FileSystemService {
         Element parent = parentId != null ? getElementWithPermissionCheck(parentId, owner, true) : null;
 
         Directory dir = Directory.builder()
-                .name(name)
+                .name(generateUniqueName(name, parent, ElementType.DIRECTORY))
                 .parent(parent)
                 .owner(owner)
                 .edited(LocalDateTime.now())

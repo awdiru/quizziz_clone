@@ -34,24 +34,27 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST:localhost}
       port: 6379
 
   datasource:
-    url: jdbc:postgresql://localhost:6432/quizizz_clone
-    username: user
-    password: password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:6432/quizizz_clone}
+    username: ${DB_USERNAME:user}
+    password: ${DB_PASSWORD:password}
     driverClassName: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
-
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   sql:
     init:
       mode: always

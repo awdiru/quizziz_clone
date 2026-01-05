@@ -1,53 +1,55 @@
+/* src/styles/Dashboard.css */
+
 .dashboard-container {
     @apply min-h-screen bg-brand-surface flex flex-col font-sans;
 }
 
-/* --- Шапка --- */
+/* --- ШАПКА --- */
 .dashboard-header {
-    @apply bg-brand-purple text-white p-4 shadow-xl flex justify-between items-center z-20;
+    @apply bg-brand-purple text-white p-4 shadow-xl flex justify-between items-center z-30 sticky top-0;
 }
 
 .header-logo {
-    @apply font-bold text-xl tracking-tight;
+    @apply font-bold text-xl tracking-tight select-none;
 }
 
 .header-user-badge {
-    @apply flex items-center gap-2 px-3 py-1.5 bg-brand-purple-light/30 rounded-btn border border-white/10;
+    @apply flex items-center gap-2 px-3 py-1.5 bg-brand-purple-light/30 rounded-btn border border-white/10 shadow-sm;
 }
 
 .header-username {
-    @apply text-sm font-medium;
+    @apply text-sm font-medium tracking-wide;
 }
 
 .btn-logout-link {
     @apply flex items-center gap-2 hover:text-brand-yellow transition-colors text-sm font-semibold;
 }
 
-/* --- Главный контент --- */
+/* --- ГЛАВНЫЙ КОНТЕНТ --- */
 .dashboard-main {
-    @apply flex-1 p-6 max-w-7xl mx-auto w-full animate-in fade-in duration-500;
+    @apply flex-1 p-6 max-w-7xl mx-auto w-full animate-in fade-in duration-500 pb-20;
 }
 
-/* --- Хлебные крошки --- */
+/* --- ХЛЕБНЫЕ КРОШКИ --- */
 .breadcrumb-container {
-    @apply flex items-center gap-3 mb-8 text-sm font-black text-brand-gray uppercase tracking-tighter;
+    @apply flex items-center gap-3 mb-8 text-sm font-black text-brand-gray uppercase tracking-tighter select-none;
 }
 
 .breadcrumb-link {
-    @apply flex items-center gap-1 hover:text-brand-purple transition-all cursor-pointer;
+    @apply flex items-center gap-1 hover:text-brand-purple transition-all cursor-pointer active:scale-95;
 }
 
 .breadcrumb-separator {
-    @apply text-slate-300;
+    @apply text-brand-gray/30;
 }
 
-/* --- Кнопки управления (Верхняя панель) --- */
+/* --- КНОПКИ УПРАВЛЕНИЯ --- */
 .controls-panel {
     @apply flex gap-4 mb-8 items-center;
 }
 
 .btn-icon-square {
-    @apply p-2 rounded-lg border-2 border-brand-input bg-white text-brand-gray hover:border-brand-purple hover:text-brand-purple transition-all disabled:opacity-30 disabled:cursor-not-allowed;
+    @apply p-2 rounded-lg border-2 border-brand-input bg-white text-brand-gray hover:border-brand-purple hover:text-brand-purple transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm;
 }
 
 .btn-control-base {
@@ -56,18 +58,19 @@
 
 .btn-folder {
     @apply bg-brand-purple text-white hover:bg-brand-purple-light;
+    box-shadow: 0 4px 0 theme('colors.brand.dark');
 }
 
 .btn-test {
     @apply bg-brand-yellow text-brand-purple hover:bg-brand-yellow-hover;
+    box-shadow: 0 4px 0 theme('colors.brand.yellow-shadow');
 }
 
-/* --- Сетка и Карточки --- */
+/* --- СЕТКА ЭЛЕМЕНТОВ --- */
 .elements-grid {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
 }
 
-/* ВНИМАНИЕ: убрал group отсюда, добавил в JSX */
 .element-card {
     @apply bg-white border-2 border-brand-input p-5 rounded-quiz shadow-sm flex flex-col transition-all relative cursor-pointer overflow-hidden;
 }
@@ -77,15 +80,19 @@
 }
 
 .lock-badge {
-    @apply absolute top-2 right-2 p-1.5 bg-brand-surface/80 text-brand-gray/60 rounded-full backdrop-blur-sm shadow-sm;
+    @apply absolute top-2 right-2 p-1.5 bg-brand-surface/90 text-brand-gray/60 rounded-full backdrop-blur-sm shadow-sm z-10;
 }
 
 .element-main-info {
-    @apply flex items-center gap-3 cursor-pointer;
+    @apply flex items-center gap-3 cursor-pointer h-full;
 }
 
 .element-icon-wrapper {
-    @apply p-3 rounded-2xl transition-transform;
+    @apply p-3 rounded-2xl transition-transform duration-300;
+}
+
+.group:hover .element-icon-wrapper {
+    @apply scale-110;
 }
 
 .icon-folder {
@@ -96,17 +103,20 @@
     @apply bg-brand-yellow-subtle text-brand-yellow-hover;
 }
 
+.element-text-content {
+    @apply truncate flex-1 min-w-0;
+}
+
 .element-title {
     @apply font-bold text-brand-dark truncate text-sm leading-tight pr-6;
 }
 
 .element-owner-info {
-    @apply text-[10px] text-brand-gray mt-0.5 truncate font-medium flex items-center gap-1;
+    @apply text-[10px] text-brand-gray mt-1 truncate font-medium flex items-center gap-1;
 }
 
-/* Футер карточки */
 .element-footer {
-    @apply flex justify-between items-center mt-3 pt-2 border-t border-brand-input/50;
+    @apply flex justify-between items-center mt-4 pt-3 border-t border-brand-input/50;
 }
 
 .element-date {
@@ -114,25 +124,23 @@
 }
 
 .element-actions {
-    @apply flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity;
+    @apply flex gap-1 opacity-0 transition-opacity duration-200;
+}
+
+.group:hover .element-actions {
+    @apply opacity-100;
 }
 
 .btn-action {
-    @apply p-1.5 rounded-md transition-all disabled:text-brand-input disabled:cursor-not-allowed;
+    @apply p-1.5 rounded-md transition-all disabled:text-brand-input disabled:cursor-not-allowed transform hover:scale-110 active:scale-90;
 }
 
 .btn-action-play {
     @apply text-brand-green hover:bg-brand-green/10;
 }
 
-.btn-action-share {
-    @apply text-brand-gray/60 hover:text-brand-purple-light hover:bg-brand-purple-subtle;
-}
-
-.btn-action-copy {
-    @apply text-brand-gray/60 hover:text-brand-purple-light hover:bg-brand-purple-subtle;
-}
-
+.btn-action-share,
+.btn-action-copy,
 .btn-action-edit {
     @apply text-brand-gray/60 hover:text-brand-purple-light hover:bg-brand-purple-subtle;
 }
@@ -141,25 +149,37 @@
     @apply text-brand-gray/60 hover:text-brand-red hover:bg-brand-red/10;
 }
 
-/* --- Модальные окна --- */
+/* --- МОДАЛЬНЫЕ ОКНА --- */
 .modal-overlay {
-    @apply fixed inset-0 bg-brand-dark/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200;
+    @apply fixed inset-0 bg-brand-dark/40 backdrop-blur-md flex items-center justify-center z-50 p-4;
+}
+
+.modal-overlay-high-z {
+    @apply z-[60];
 }
 
 .modal-content {
-    @apply bg-white rounded-quiz shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in slide-in-from-bottom-8 duration-300;
+    @apply bg-white rounded-quiz shadow-2xl w-full max-w-md overflow-hidden flex flex-col;
 }
 
 .modal-content-wide {
-    @apply max-w-2xl max-h-[85vh] flex flex-col;
+    @apply max-w-2xl max-h-[85vh];
 }
 
 .modal-content-narrow {
     @apply max-w-sm;
 }
 
+.modal-content-visible {
+    @apply overflow-visible;
+}
+
 .modal-header {
-    @apply p-6 border-b-2 border-brand-input flex justify-between items-center text-white font-bold;
+    @apply p-6 border-b-2 border-brand-input flex justify-between items-center text-white font-bold relative;
+}
+
+.modal-header-rounded-fix {
+    @apply rounded-t-quiz;
 }
 
 .modal-header-purple {
@@ -175,56 +195,116 @@
 }
 
 .modal-header-preview {
-    @apply bg-brand-surface text-brand-purple border-b;
+    @apply bg-brand-surface text-brand-dark border-b border-brand-input/50;
 }
 
 .modal-close-btn {
-    @apply text-white/50 hover:text-white transition-colors;
+    @apply p-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors;
 }
 
 .modal-close-btn-dark {
-    @apply text-brand-gray hover:text-brand-dark;
+    @apply p-1 rounded-full text-brand-gray hover:text-brand-dark hover:bg-brand-input transition-colors;
 }
 
-/* Формы внутри модалок */
 .modal-form {
     @apply p-6 space-y-5;
 }
 
 .modal-input {
     @apply w-full p-4 bg-brand-input border-2 border-transparent rounded-btn outline-none transition-all font-bold text-brand-dark placeholder:text-brand-gray/50;
-    @apply focus:border-brand-purple focus:bg-white;
+    @apply focus:border-brand-purple focus:bg-white focus:shadow-sm;
 }
 
 .modal-checkbox-group {
-    @apply flex items-center gap-3 p-3.5 bg-brand-surface rounded-btn cursor-pointer hover:bg-brand-input transition-colors;
+    @apply flex items-center gap-3 p-3.5 bg-brand-surface border border-transparent rounded-btn cursor-pointer hover:bg-brand-input hover:border-brand-input transition-all;
 }
 
-/* Стили превью контента */
+.checkbox-brand {
+    @apply w-5 h-5 accent-brand-purple cursor-pointer rounded;
+}
+
+.btn-modal-primary {
+    @apply w-full bg-brand-purple text-white font-black py-4 rounded-btn shadow-lg transition-all uppercase tracking-wider flex items-center justify-center gap-2;
+    @apply hover:bg-brand-purple-light hover:-translate-y-0.5 active:translate-y-0 active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed;
+    box-shadow: 0 4px 0 theme('colors.brand.dark');
+}
+
+.btn-modal-yellow {
+    @apply w-full bg-brand-yellow text-brand-purple font-black py-4 rounded-btn shadow-lg transition-all uppercase tracking-wider;
+    @apply hover:bg-brand-yellow-hover hover:-translate-y-0.5 active:translate-y-0 active:shadow-md;
+    box-shadow: 0 4px 0 theme('colors.brand.yellow-shadow');
+}
+
+/* --- КОМПОНЕНТЫ ПРЕВЬЮ --- */
 .preview-scroll-area {
-    @apply flex-1 overflow-y-auto p-6 space-y-4;
+    @apply flex-1 overflow-y-auto p-6 space-y-4 bg-white;
 }
 
 .preview-question-card {
-    @apply p-4 bg-brand-surface rounded-btn border border-brand-input space-y-3;
+    @apply p-5 bg-brand-surface rounded-btn border border-brand-input space-y-3 shadow-sm;
+}
+
+.preview-question-text {
+    @apply font-bold text-brand-dark text-sm leading-relaxed;
+}
+
+.preview-answers-grid {
+    @apply grid grid-cols-1 gap-2;
 }
 
 .preview-answer-item {
-    @apply p-2.5 rounded-lg border text-xs shadow-sm bg-white border-brand-input text-brand-gray;
+    @apply p-3 rounded-lg border text-xs font-medium shadow-sm bg-white border-brand-input text-brand-gray transition-colors;
 }
 
 .preview-answer-correct {
     @apply bg-brand-green/10 border-brand-green text-brand-dark font-bold;
 }
 
-/* Кнопки в модалках */
-.btn-modal-primary {
-    @apply w-full bg-brand-purple text-white font-black py-4 rounded-btn shadow-lg transition-all uppercase tracking-wider flex items-center justify-center gap-2;
-    @apply hover:bg-brand-purple-light;
+.preview-footer {
+    @apply p-4 border-t border-brand-input bg-brand-surface flex justify-end gap-3;
 }
 
-.btn-modal-yellow {
-    @apply w-full bg-brand-yellow text-brand-purple font-black py-4 rounded-btn shadow-lg transition-all uppercase tracking-wider;
-    @apply hover:bg-brand-yellow-hover hover:scale-[1.02] active:scale-[0.98];
-    box-shadow: 0 4px 0 theme('colors.brand.yellow-shadow');
+.badge-readonly {
+    @apply ml-2 text-brand-red font-bold uppercase text-[10px] bg-brand-red/10 px-2 py-1 rounded tracking-wider border border-brand-red/10;
+}
+
+.badge-owner {
+    @apply flex items-center gap-1 text-xs text-brand-gray font-medium;
+}
+
+.preview-loading {
+    @apply flex flex-col items-center justify-center py-12 text-brand-gray gap-2 animate-pulse;
+}
+
+.search-container {
+    @apply relative w-full;
+}
+
+.search-dropdown {
+    @apply absolute top-full left-0 right-0 mt-2 bg-white border-2 border-brand-input
+    rounded-btn shadow-xl z-[70] max-h-52 overflow-y-auto;
+}
+
+.search-result-item {
+    @apply p-3 flex flex-col gap-0.5 cursor-pointer transition-colors border-b border-brand-input/50 last:border-none;
+}
+
+.search-result-item:hover {
+    @apply bg-brand-purple-subtle;
+}
+
+.search-result-name {
+    @apply font-bold text-brand-dark text-sm;
+}
+
+.search-result-email {
+    @apply text-xs text-brand-gray font-medium;
+}
+
+.search-loader {
+    @apply absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none;
+}
+
+.spinner-brand {
+    @apply animate-spin h-5 w-5 border-2 border-brand-purple border-t-transparent rounded-full;
 }
