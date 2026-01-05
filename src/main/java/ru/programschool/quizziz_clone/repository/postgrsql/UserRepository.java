@@ -31,6 +31,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByConfirmationToken(String token);
 
+    /**
+     * Поиск пользователей по совпадению в имени или email
+     *
+     * @param query    строка для поиска
+     * @param pageable количество ответов
+     * @return Список совпадений
+     */
     @Query("""
             SELECT u FROM User u WHERE
             (LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')) OR
@@ -39,6 +46,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """)
     List<User> searchUsers(@Param("query") String query, Pageable pageable);
 
+    /**
+     * Удаление всех аккаунтов пользователей, регистрацию которых не подтвердил администратор и дата регистрации которых ранее установленного времени
+     *
+     * @param dateTime установленное время
+     */
     @Modifying
     @Transactional
     @Query("""
@@ -48,9 +60,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
             OR u.registerDate < :dateTime)
             """)
     void deleteUnactivatedUsersOlderThan(@Param("dateTime") LocalDateTime dateTime);
-
-    @Modifying
-    @Transactional // Важно: операции обновления требуют транзакции
-    @Query("UPDATE User u SET u.registerDate = :defaultDate WHERE u.registerDate IS NULL")
-    int updateNullRegisterDates(@Param("defaultDate") LocalDateTime defaultDate);
 }
