@@ -15,6 +15,7 @@ public class QuestionExposedDto {
     private int currentQuestionNumber;
     private int totalQuestions;
     private List<? extends AnswerExposedDto> answers;
+    private List<StudentsAnswers> studentsAnswers;
 
     @Data
     @SuperBuilder

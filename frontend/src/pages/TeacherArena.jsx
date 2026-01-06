@@ -4,7 +4,7 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import {QRCodeSVG} from 'qrcode.react';
 import api from '../api/axios';
-import {ArrowLeft, Crown, Loader2, Play, SkipForward, Users, Check} from 'lucide-react';
+import {ArrowLeft, Check, Crown, Loader2, Play, SkipForward, Users} from 'lucide-react';
 import {WS_URL} from "../config";
 import '../styles/TeacherArena.css';
 
@@ -20,6 +20,7 @@ const TeacherArena = () => {
     const [revealedAnswers, setRevealedAnswers] = useState(null);
     const prevParticipantsRef = useRef([]);
     const currentQuestionNumberRef = useRef(-1);
+    const [studentsAnswers, setStudentsAnswers] = useState([]);
 
     useEffect(() => {
         const client = new Client({
@@ -47,6 +48,8 @@ const TeacherArena = () => {
                     }
                     setCurrentQuestion(questionData);
                     setIsFinished(false);
+                    setRevealedAnswers(null);
+                    setStudentsAnswers([]);
                 });
 
                 client.subscribe(`/topic/room/${pin}/leaderboard`, (m) => {
@@ -72,39 +75,59 @@ const TeacherArena = () => {
     const handleAction = async () => {
         setLoading(true);
         try {
-            // 1. Старт игры (если еще не началась)
             if (!currentQuestion && !isFinished) {
                 await api.post(`/rooms/${pin}/start`);
             }
-            // 2. Если идет игра:
             else if (currentQuestion && !isFinished) {
-                // Если ответы еще НЕ показаны -> запрашиваем их (Шаг 4, 5, 6)
                 if (!revealedAnswers) {
                     const res = await api.get(`/rooms/${pin}/answers`);
-                    // Ожидаем структуру: { answers: [{..., isRight: true}, ...], ... }
+                    // Сохраняем и варианты ответов, и ответы студентов из вашего нового JSON
                     setRevealedAnswers(res.data.answers);
+                    setStudentsAnswers(res.data.studentsAnswers || []); // Сохраняем ответы студентов
                 }
-                // Если ответы УЖЕ показаны -> переходим к следующему вопросу (Шаг 1, 7)
                 else {
                     if (currentQuestion.currentQuestionNumber + 1 < currentQuestion.totalQuestions) {
                         await api.post(`/rooms/${pin}/next`);
-                        // revealedAnswers сбросится в useEffect при приходе нового вопроса
                     } else {
-                        // Финиш
                         const res = await api.post(`/rooms/${pin}/finish`);
                         setParticipants(res.data);
                         setIsFinished(true);
                         setCurrentQuestion(null);
                         setRevealedAnswers(null);
+                        setStudentsAnswers([]);
                     }
                 }
             }
         } catch (e) {
             console.error(e);
-            alert("Ошибка!");
         } finally {
             setLoading(false);
         }
+    };
+
+    const getStudentStatus = (studentName) => {
+        if (!revealedAnswers || studentsAnswers.length === 0) return 'default';
+
+        const student = studentsAnswers.find(s => s.username === studentName);
+        // Если ученик вообще не отвечал на этот вопрос
+        if (!student || !student.answers || student.answers.length === 0) return 'default';
+
+        const correctAnswersNumbers = revealedAnswers.filter(a => a.isRight).map(a => a.number);
+        const studentChoices = student.answers;
+
+        // 1. Проверка на ЗЕЛЕНЫЙ: выбрал ВСЕ правильные И НИ ОДНОГО лишнего
+        const pickedAllCorrect = correctAnswersNumbers.every(num => studentChoices.includes(num));
+        const hasNoWrong = studentChoices.every(num => correctAnswersNumbers.includes(num));
+
+        if (pickedAllCorrect && hasNoWrong) return 'correct';
+
+        // 2. Проверка на ЖЕЛТЫЙ: есть ХОТЯ БЫ ОДИН правильный
+        const hasAtLeastOneCorrect = studentChoices.some(num => correctAnswersNumbers.includes(num));
+
+        if (hasAtLeastOneCorrect) return 'partial';
+
+        // 3. Остальное (не выбрал ни одного правильного) - КРАСНЫЙ
+        return 'wrong';
     };
 
     // Хелпер для проверки, является ли конкретный ответ верным
@@ -122,13 +145,12 @@ const TeacherArena = () => {
                     <ArrowLeft size={16}/> ВЫХОД ИЗ ИГРЫ
                 </button>
                 {currentQuestion && (
-                    <div className="flex items-center gap-4">
-                        <div className="bg-brand-yellow text-brand-purple px-4 py-1 rounded-full font-black text-sm">
+                    <div className="arena-header-info">
+                        <div className="arena-question-counter">
                             ВОПРОС {currentQuestion.currentQuestionNumber + 1} / {currentQuestion.totalQuestions}
                         </div>
 
-                        {/* КНОПКА ДЕЙСТВИЯ (Меняет иконку и логику) */}
-                        <button onClick={handleAction} className="btn-icon-white" disabled={loading}>
+                        <button onClick={handleAction} className="btn-action-icon" disabled={loading}>
                             {loading ? (
                                 <Loader2 size={20} className="animate-spin"/>
                             ) : revealedAnswers ? (
@@ -148,7 +170,7 @@ const TeacherArena = () => {
                     <div className="arena-qrcode-wrapper">
                         <QRCodeSVG value={`${window.location.origin}/join/${pin}`} size={240}/>
                     </div>
-                    <div className="text-center md:text-left">
+                    <div className="arena-pin-section">
                         <span className="arena-pin-label">ПРИСОЕДИНЯЙТЕСЬ ПО КОДУ:</span>
                         <h1 className="arena-pin-value">{pin}</h1>
                         <button
@@ -167,16 +189,16 @@ const TeacherArena = () => {
                     <div className="arena-crown-wrapper">
                         <Crown size={80}/>
                     </div>
-                    <h1 className="arena-finish-title text-brand-yellow">ПОБЕДИТЕЛИ</h1>
+                    <h1 className="arena-finish-title">ПОБЕДИТЕЛИ</h1>
                     <div className="leaderboard-final">
                         {participants.slice(0, 5).map((p, i) => (
                             <div key={i} className="leaderboard-item">
-                                <span className="font-black text-xl">{i + 1}. {p.name}</span>
-                                <span className="text-brand-yellow font-black">{p.score}</span>
+                                <span className="leaderboard-rank-name">{i + 1}. {p.name}</span>
+                                <span className="leaderboard-score">{p.score}</span>
                             </div>
                         ))}
                     </div>
-                    <button onClick={() => navigate('/dashboard')} className="arena-start-button mt-12">
+                    <button onClick={() => navigate('/dashboard')} className="arena-start-button arena-finish-button">
                         ВЕРНУТЬСЯ В МЕНЮ
                     </button>
                 </div>
@@ -186,12 +208,9 @@ const TeacherArena = () => {
                     <div className="arena-question-box">
                         <h2 className="arena-question-text">{currentQuestion.questionText}</h2>
 
-                        {/* ВОЗВРАЩЕННЫЕ ВАРИАНТЫ ОТВЕТОВ */}
                         <div className="arena-teacher-answers-grid">
                             {currentQuestion.answers.map((ans) => {
-                                // Определяем, нужно ли подсвечивать этот блок
                                 const isCorrect = isAnswerCorrect(ans.number);
-
                                 return (
                                     <div
                                         key={ans.number}
@@ -207,15 +226,33 @@ const TeacherArena = () => {
 
                     {/* СПИСОК УЧАСТНИКОВ ВНИЗУ */}
                     <div className="arena-participants-bottom">
-                        {participants.map((p) => (
-                            <div key={p.name} className="participant-card">
-                                {p.answered && deltas[p.name] !== undefined && (
-                                    <span className="delta-points">+{deltas[p.name]}</span>
-                                )}
-                                <span className="participant-name">{p.name}</span>
-                                <span className="participant-score">{p.score}</span>
-                            </div>
-                        ))}
+                        {participants.map((p) => {
+                            const status = getStudentStatus(p.name);
+                            const studentData = studentsAnswers.find(s => s.username === p.name);
+
+                            return (
+                                <div key={p.name} className={`participant-card status-${status}`}>
+                                    {revealedAnswers && studentData && (
+                                        <div className="student-answers-row">
+                                            {studentData.answers.map(num => (
+                                                <span
+                                                    key={num}
+                                                    className={`answer-badge ${isAnswerCorrect(num) ? 'badge-correct' : 'badge-wrong'}`}
+                                                >
+                                                    {num}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {p.answered && deltas[p.name] !== undefined && !revealedAnswers && (
+                                        <span className="delta-points">+{deltas[p.name]}</span>
+                                    )}
+                                    <span className="participant-name">{p.name}</span>
+                                    <span className="participant-score">{p.score}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                 </main>
             )}
@@ -223,12 +260,12 @@ const TeacherArena = () => {
             {/* ФУТЕР ТОЛЬКО ДЛЯ ЛОББИ */}
             {!currentQuestion && !isFinished && (
                 <div className="arena-lobby-footer">
-                    <div className="flex items-center gap-2 mb-6 text-purple-300 font-bold uppercase text-sm">
+                    <div className="arena-players-count">
                         <Users size={18}/> ИГРОКОВ В КОМНАТЕ: {participants.length}
                     </div>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="arena-lobby-players-grid">
                         {participants.map((p, i) => (
-                            <div key={i} className="bg-white/10 px-6 py-3 rounded-2xl font-bold border border-white/5">
+                            <div key={i} className="arena-lobby-player-tag">
                                 {p.name}
                             </div>
                         ))}
