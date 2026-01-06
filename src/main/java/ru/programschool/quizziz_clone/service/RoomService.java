@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.stylesheets.LinkStyle;
 import ru.programschool.quizziz_clone.exception.list.AccessDeniedException;
 import ru.programschool.quizziz_clone.exception.list.ResourceNotFoundException;
 import ru.programschool.quizziz_clone.model.dto.room.AnswerSubmissionDto;
@@ -20,7 +19,6 @@ import ru.programschool.quizziz_clone.repository.postgrsql.ElementRepository;
 import ru.programschool.quizziz_clone.repository.redis.RoomRepository;
 
 import java.util.List;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -88,18 +86,37 @@ public class RoomService {
         sendQuestion(room, test);
     }
 
+    public QuestionExposedDto answered(String pin, User teacher) {
+        Room room = getRoom(pin);
+        checkRoom(room, teacher);
+        Test test = getTest(room);
+
+        int currentQuestionIndex = room.getCurrentQuestionIndex();
+
+        if (currentQuestionIndex >= test.getQuestions().size())
+            throw new IllegalStateException("Вопросы закончились. Завершите тест.");
+
+        Question question = test.getQuestions().get(currentQuestionIndex);
+
+        return QuestionExposedDto.builder()
+                .questionText(question.getQuestion())
+                .currentQuestionNumber(currentQuestionIndex)
+                .totalQuestions(test.getQuestions().size())
+                .answers(question.getAnswers().stream()
+                        .map(a -> QuestionExposedDto.AnswerClosedDto.builder()
+                                .answerText(a.getAnswer())
+                                .number(a.getNumber())
+                                .isRight(a.getIsRight())
+                                .build())
+                        .toList())
+                .build();
+    }
+
     @Transactional
     public void nextQuestion(String pin, User teacher) {
         Room room = getRoom(pin);
-
-        if (!room.getOwnerId().equals(teacher.getId()))
-            throw new AccessDeniedException("У вас нет прав для управления этой комнатой");
-
-        if (room.getStatus() != Room.RoomStatus.IN_PROGRESS)
-            throw new IllegalStateException("Тест не запущен");
-
-        Test test = (Test) elementRepository.findById(room.getTestId())
-                .orElseThrow(() -> new ResourceNotFoundException("Тест не найден"));
+        checkRoom(room, teacher);
+        Test test = getTest(room);
 
         int nextIndex = room.getCurrentQuestionIndex() + 1;
 
@@ -226,5 +243,18 @@ public class RoomService {
     public Room getRoom(String pin) {
         return roomRepository.findById(pin)
                 .orElseThrow(() -> new ResourceNotFoundException("Комната с кодом " + pin + " не найдена"));
+    }
+
+    private void checkRoom(Room room, User teacher) {
+        if (!room.getOwnerId().equals(teacher.getId()))
+            throw new AccessDeniedException("У вас нет прав для управления этой комнатой");
+
+        if (room.getStatus() != Room.RoomStatus.IN_PROGRESS)
+            throw new IllegalStateException("Тест не запущен");
+    }
+
+    private Test getTest(Room room) {
+        return (Test) elementRepository.findById(room.getTestId())
+                .orElseThrow(() -> new ResourceNotFoundException("Тест не найден"));
     }
 }

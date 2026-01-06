@@ -59,7 +59,12 @@
 }
 
 .arena-teacher-answer-item {
-    @apply p-6 rounded-btn border-2 border-white/20 bg-white/5 flex items-center gap-4 text-xl font-bold;
+    @apply p-6 rounded-btn border-2 border-white/20 bg-white/5 flex items-center gap-4 text-xl font-bold transition-all duration-300;
+}
+
+/* НОВОЕ: Стиль для правильного ответа */
+.arena-teacher-answer-item.correct {
+    @apply border-brand-green bg-brand-green/20 text-brand-green shadow-[0_0_30px_rgba(69,218,13,0.3)];
 }
 
 .answer-number {

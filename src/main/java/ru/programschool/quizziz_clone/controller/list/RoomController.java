@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.programschool.quizziz_clone.controller.BaseController;
 import ru.programschool.quizziz_clone.model.dto.room.JoinRoomRequest;
+import ru.programschool.quizziz_clone.model.dto.room.QuestionExposedDto;
 import ru.programschool.quizziz_clone.model.entity.postgrsql.User;
 import ru.programschool.quizziz_clone.model.entity.redis.Room;
 import ru.programschool.quizziz_clone.repository.postgrsql.UserRepository;
@@ -53,6 +54,13 @@ public class RoomController extends BaseController {
         User teacher = getUserFromPrincipal(principal);
         roomService.startQuiz(pin, teacher);
         return ResponseEntity.ok("Тест запущен");
+    }
+
+    @GetMapping("/{pin}/answers")
+    public ResponseEntity<?> getAnswer(@PathVariable String pin, Principal principal) {
+        User teacher = getUserFromPrincipal(principal);
+        QuestionExposedDto questionExposedDto = roomService.answered(pin, teacher);
+        return ResponseEntity.ok(questionExposedDto);
     }
 
     @PostMapping("/{pin}/next")

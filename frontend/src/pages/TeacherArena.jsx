@@ -4,9 +4,9 @@ import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import {QRCodeSVG} from 'qrcode.react';
 import api from '../api/axios';
-import {ArrowLeft, Crown, Loader2, Play, SkipForward, Users} from 'lucide-react';
+import {ArrowLeft, Crown, Loader2, Play, SkipForward, Users, Check} from 'lucide-react';
 import {WS_URL} from "../config";
-import '../styles/TeacherArena.css'; // Импорт стилей
+import '../styles/TeacherArena.css';
 
 const TeacherArena = () => {
     const { pin } = useParams();
@@ -17,6 +17,7 @@ const TeacherArena = () => {
     const [isFinished, setIsFinished] = useState(false);
     const [loading, setLoading] = useState(false);
     const [deltas, setDeltas] = useState({});
+    const [revealedAnswers, setRevealedAnswers] = useState(null);
     const prevParticipantsRef = useRef([]);
     const currentQuestionNumberRef = useRef(-1);
 
@@ -42,6 +43,7 @@ const TeacherArena = () => {
                         });
                         setDeltas({});
                         currentQuestionNumberRef.current = questionData.currentQuestionNumber;
+                        setRevealedAnswers(null);
                     }
                     setCurrentQuestion(questionData);
                     setIsFinished(false);
@@ -70,18 +72,46 @@ const TeacherArena = () => {
     const handleAction = async () => {
         setLoading(true);
         try {
+            // 1. Старт игры (если еще не началась)
             if (!currentQuestion && !isFinished) {
                 await api.post(`/rooms/${pin}/start`);
-            } else if (currentQuestion && currentQuestion.currentQuestionNumber + 1 < currentQuestion.totalQuestions) {
-                await api.post(`/rooms/${pin}/next`);
-            } else {
-                const res = await api.post(`/rooms/${pin}/finish`);
-                setParticipants(res.data);
-                setIsFinished(true);
-                setCurrentQuestion(null);
             }
-        } catch (e) { alert("Ошибка!"); }
-        finally { setLoading(false); }
+            // 2. Если идет игра:
+            else if (currentQuestion && !isFinished) {
+                // Если ответы еще НЕ показаны -> запрашиваем их (Шаг 4, 5, 6)
+                if (!revealedAnswers) {
+                    const res = await api.get(`/rooms/${pin}/answers`);
+                    // Ожидаем структуру: { answers: [{..., isRight: true}, ...], ... }
+                    setRevealedAnswers(res.data.answers);
+                }
+                // Если ответы УЖЕ показаны -> переходим к следующему вопросу (Шаг 1, 7)
+                else {
+                    if (currentQuestion.currentQuestionNumber + 1 < currentQuestion.totalQuestions) {
+                        await api.post(`/rooms/${pin}/next`);
+                        // revealedAnswers сбросится в useEffect при приходе нового вопроса
+                    } else {
+                        // Финиш
+                        const res = await api.post(`/rooms/${pin}/finish`);
+                        setParticipants(res.data);
+                        setIsFinished(true);
+                        setCurrentQuestion(null);
+                        setRevealedAnswers(null);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Ошибка!");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Хелпер для проверки, является ли конкретный ответ верным
+    const isAnswerCorrect = (ansNumber) => {
+        if (!revealedAnswers) return false;
+        const answer = revealedAnswers.find(a => a.number === ansNumber);
+        return answer ? answer.isRight : false;
     };
 
     return (
@@ -94,10 +124,18 @@ const TeacherArena = () => {
                 {currentQuestion && (
                     <div className="flex items-center gap-4">
                         <div className="bg-brand-yellow text-brand-purple px-4 py-1 rounded-full font-black text-sm">
-                            ВОПРОС {currentQuestion.number}
+                            ВОПРОС {currentQuestion.currentQuestionNumber + 1} / {currentQuestion.totalQuestions}
                         </div>
-                        <button onClick={handleAction} className="btn-icon-white">
-                            <SkipForward size={20}/>
+
+                        {/* КНОПКА ДЕЙСТВИЯ (Меняет иконку и логику) */}
+                        <button onClick={handleAction} className="btn-icon-white" disabled={loading}>
+                            {loading ? (
+                                <Loader2 size={20} className="animate-spin"/>
+                            ) : revealedAnswers ? (
+                                <SkipForward size={20}/>
+                            ) : (
+                                <Check size={20}/>
+                            )}
                         </button>
                     </div>
                 )}
@@ -150,12 +188,20 @@ const TeacherArena = () => {
 
                         {/* ВОЗВРАЩЕННЫЕ ВАРИАНТЫ ОТВЕТОВ */}
                         <div className="arena-teacher-answers-grid">
-                            {currentQuestion.answers.map((ans) => (
-                                <div key={ans.number} className="arena-teacher-answer-item">
-                                    <div className="answer-number">{ans.number}</div>
-                                    <span>{ans.answerText}</span>
-                                </div>
-                            ))}
+                            {currentQuestion.answers.map((ans) => {
+                                // Определяем, нужно ли подсвечивать этот блок
+                                const isCorrect = isAnswerCorrect(ans.number);
+
+                                return (
+                                    <div
+                                        key={ans.number}
+                                        className={`arena-teacher-answer-item ${isCorrect ? 'correct' : ''}`}
+                                    >
+                                        <div className="answer-number">{ans.number}</div>
+                                        <span>{ans.answerText}</span>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
