@@ -1,10 +1,10 @@
 /* TeacherArena.css */
 
 .teacher-arena-container {
-    @apply min-h-screen bg-brand-purple text-white flex flex-col overflow-hidden;
+    @apply min-h-screen bg-brand-purple text-white flex flex-col overflow-hidden font-sans;
 }
 
-/* --- ЛОББИ --- */
+/* --- ШАПКА --- */
 .arena-header {
     @apply p-6 border-b border-white/10 flex justify-between items-center bg-black/10;
 }
@@ -13,12 +13,29 @@
     @apply flex items-center gap-2 text-purple-300 font-bold uppercase text-xs hover:text-white transition-colors;
 }
 
+.arena-header-info {
+    @apply flex items-center gap-4;
+}
+
+.arena-question-counter {
+    @apply bg-brand-yellow text-brand-purple px-4 py-1 rounded-full font-black text-sm;
+}
+
+.btn-action-icon {
+    @apply p-3 bg-white/10 hover:bg-white/20 rounded-btn transition-colors disabled:opacity-50;
+}
+
+/* --- ЛОББИ --- */
 .arena-lobby-main {
     @apply flex-1 flex flex-col md:flex-row items-center justify-center gap-12 p-12;
 }
 
 .arena-qrcode-wrapper {
     @apply bg-white p-6 rounded-quiz shadow-2xl transform -rotate-3 transition-transform hover:rotate-0 hover:scale-105 duration-300;
+}
+
+.arena-pin-section {
+    @apply text-center md:text-left;
 }
 
 .arena-pin-label {
@@ -29,7 +46,6 @@
     @apply text-9xl font-black tracking-tighter mb-8 text-center text-white;
 }
 
-/* Исправленная кнопка Начать */
 .arena-start-button {
     @apply bg-brand-yellow text-brand-purple px-12 py-6 rounded-quiz-lg font-black text-3xl shadow-btn-yellow transition-all flex items-center gap-4 mx-auto md:mx-0;
     @apply hover:bg-brand-yellow-hover active:shadow-none active:translate-y-1;
@@ -38,6 +54,18 @@
 
 .arena-lobby-footer {
     @apply p-8 bg-black/20 border-t border-white/10;
+}
+
+.arena-players-count {
+    @apply flex items-center gap-2 mb-6 text-purple-300 font-bold uppercase text-sm;
+}
+
+.arena-lobby-players-grid {
+    @apply flex flex-wrap gap-4;
+}
+
+.arena-lobby-player-tag {
+    @apply bg-white/10 px-6 py-3 rounded-btn font-bold border border-white/5;
 }
 
 /* --- ИГРОВОЙ ЭКРАН --- */
@@ -53,7 +81,6 @@
     @apply text-4xl md:text-5xl font-black leading-tight mb-10 italic;
 }
 
-/* Сетка ответов для учителя */
 .arena-teacher-answers-grid {
     @apply grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-5xl mx-auto;
 }
@@ -62,7 +89,6 @@
     @apply p-6 rounded-btn border-2 border-white/20 bg-white/5 flex items-center gap-4 text-xl font-bold transition-all duration-300;
 }
 
-/* НОВОЕ: Стиль для правильного ответа */
 .arena-teacher-answer-item.correct {
     @apply border-brand-green bg-brand-green/20 text-brand-green shadow-[0_0_30px_rgba(69,218,13,0.3)];
 }
@@ -71,13 +97,13 @@
     @apply w-10 h-10 rounded-full bg-brand-yellow text-brand-purple flex items-center justify-center font-black shrink-0;
 }
 
-/* Панели учеников внизу */
+/* ПАНЕЛИ УЧАСТНИКОВ */
 .arena-participants-bottom {
     @apply p-6 flex flex-wrap justify-center gap-4 mt-auto;
 }
 
 .participant-card {
-    @apply relative bg-white/10 px-6 py-4 rounded-btn border-b-4 border-black/30 min-w-[140px] text-center;
+    @apply relative bg-white/10 px-6 py-4 rounded-btn border-b-4 border-black/30 min-w-[140px] text-center transition-all;
 }
 
 .participant-name {
@@ -85,13 +111,44 @@
 }
 
 .participant-score {
-    @apply block text-brand-yellow font-bold text-sm text-2xl;
+    @apply block text-brand-yellow font-bold text-2xl;
 }
 
-/* Исправленная Дельта (всплывающие очки) */
+/* СТАТУСЫ КАРТОЧЕК */
+.participant-card.status-correct {
+    @apply border-brand-green bg-brand-green/30 ring-4 ring-brand-green/30 text-white;
+}
+
+.participant-card.status-partial {
+    @apply border-brand-yellow bg-brand-yellow/30 ring-4 ring-brand-yellow/30 text-white;
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
+}
+
+.participant-card.status-wrong {
+    @apply border-brand-red bg-brand-red/30 ring-4 ring-brand-red/30 text-white;
+}
+
+/* БАДЖИ ОТВЕТОВ */
+.student-answers-row {
+    @apply absolute -top-3 left-0 right-0 flex justify-center gap-1 z-10;
+}
+
+.answer-badge {
+    @apply w-6 h-6 rounded-md text-[20px] flex items-center justify-center font-black text-white shadow-md border border-white/20;
+    animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.badge-correct {
+    @apply bg-brand-green;
+}
+
+.badge-wrong {
+    @apply bg-brand-red;
+}
+
+/* АНИМАЦИИ */
 .delta-points {
-    @apply absolute -top-4 left-1/2 -translate-x-1/2 font-black text-2xl text-brand-yellow pointer-events-none;
-    font-family: 'Comic Sans MS', cursive;
+    @apply absolute -top-4 left-1/2 -translate-x-1/2 font-black text-2xl text-brand-yellow pointer-events-none font-comic;
     text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
     animation: float-up-fixed 0.8s ease-out forwards;
 }
@@ -107,7 +164,18 @@
     }
 }
 
-/* Экран итогов */
+@keyframes pop-in {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* --- ЭКРАН ИТОГОВ --- */
 .arena-finish-container {
     @apply min-h-screen bg-brand-purple text-white flex flex-col items-center justify-center p-12 text-center;
 }
@@ -117,8 +185,7 @@
 }
 
 .arena-finish-title {
-    @apply text-6xl font-black uppercase italic mb-12 tracking-tighter !important;
-    color: #facc15 !important;
+    @apply text-6xl font-black uppercase italic mb-12 tracking-tighter text-brand-yellow;
 }
 
 .leaderboard-final {
@@ -127,4 +194,16 @@
 
 .leaderboard-item {
     @apply bg-white/10 p-5 rounded-btn flex justify-between items-center border-l-8 border-brand-yellow;
+}
+
+.leaderboard-rank-name {
+    @apply font-black text-xl;
+}
+
+.leaderboard-score {
+    @apply text-brand-yellow font-black;
+}
+
+.arena-finish-button {
+    @apply mt-12;
 }

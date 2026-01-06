@@ -47,5 +47,6 @@ public class Room implements Serializable {
         private int score;
         private boolean answered;
         private Long lastAnswerTimestamp;
+        private List<Integer> lastAnswers;
     }
 }

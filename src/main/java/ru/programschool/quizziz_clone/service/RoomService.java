@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.programschool.quizziz_clone.exception.list.AccessDeniedException;
 import ru.programschool.quizziz_clone.exception.list.ResourceNotFoundException;
-import ru.programschool.quizziz_clone.model.dto.room.AnswerSubmissionDto;
-import ru.programschool.quizziz_clone.model.dto.room.JoinRoomRequest;
-import ru.programschool.quizziz_clone.model.dto.room.JoinRoomResponse;
-import ru.programschool.quizziz_clone.model.dto.room.QuestionExposedDto;
+import ru.programschool.quizziz_clone.model.dto.room.*;
 import ru.programschool.quizziz_clone.model.entity.postgrsql.Answer;
 import ru.programschool.quizziz_clone.model.entity.postgrsql.Question;
 import ru.programschool.quizziz_clone.model.entity.postgrsql.Test;
@@ -18,6 +15,7 @@ import ru.programschool.quizziz_clone.model.entity.redis.Room;
 import ru.programschool.quizziz_clone.repository.postgrsql.ElementRepository;
 import ru.programschool.quizziz_clone.repository.redis.RoomRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,7 +52,7 @@ public class RoomService {
 
         if (nameExists) throw new IllegalArgumentException("Имя " + request.getName() + " уже занято в этой комнате");
 
-        Room.Participant newPlayer = new Room.Participant(request.getName(), 0, false, null);
+        Room.Participant newPlayer = new Room.Participant(request.getName(), 0, false, null, new ArrayList<>());
         room.getParticipants().add(newPlayer);
         roomRepository.save(room);
 
@@ -107,6 +105,12 @@ public class RoomService {
                                 .answerText(a.getAnswer())
                                 .number(a.getNumber())
                                 .isRight(a.getIsRight())
+                                .build())
+                        .toList())
+                .studentsAnswers(room.getParticipants().stream()
+                        .map(p -> StudentsAnswers.builder()
+                                .username(p.getName())
+                                .answers(p.getLastAnswers().stream().sorted(Integer::compareTo).toList())
                                 .build())
                         .toList())
                 .build();
@@ -178,6 +182,7 @@ public class RoomService {
         participant.setScore(participant.getScore() + score);
         participant.setLastAnswerTimestamp(System.currentTimeMillis());
         participant.setAnswered(true);
+        participant.setLastAnswers(submission.getSelectedAnswerNumbers());
 
         roomRepository.save(room);
 
