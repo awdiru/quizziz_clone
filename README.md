@@ -49,12 +49,19 @@
 Создайте файл `.env` в корневом каталоге проекта и заполните его следующими переменными:
 
 ```env
+DB_USERNAME="имя_пользователя_БД_или_email_администратора"
+DB_PASSWORD="пароль_к_БД"
+
 APP_JWT_SECRET="ваш_секретный_ключ_минимум_32_символа"
-ALLOWED_ORIGIN=http://localhost:3000
+
+ALLOWED_ORIGINS=http://localhost:3000
+APP_ADDRESS=http://localhost:3000
+REACT_APP_API_URL=http://localhost:3000/api
+
 ADMIN_EMAIL=admin@email.com
 MAIL_HOST=smtp.yandex.ru
 MAIL_USERNAME=org@yandex.ru
-MAIL_PASSWORD=ваш_пароль_приложения
+MAIL_PASSWORD="ваш_пароль_приложения"
 MAIL_PROTOCOL=smtps
 ```
 
@@ -119,3 +126,7 @@ REACT_APP_API_URL=http://localhost:8080
 * Spring Mail
 * Lombok
 * Jakarta Validation
+
+```bash
+docker exec certbot certbot certonly --webroot -w /var/www/certbot -d avdonin-evginiy-pc.ru -d www.avdonin-evginiy-pc.ru --email awdiru@gmail.com --agree-tos --no-eff-email
+```
