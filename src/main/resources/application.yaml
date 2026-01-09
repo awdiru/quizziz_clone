@@ -1,23 +1,23 @@
 server:
   port: 8080
 app:
-  secret: ${APP_JWT_SECRET:TestSecretKeyforlocaldevlnlnnnnbnuytrdcvbnjuytrdcvb}
+  secret: ${APP_JWT_SECRET}
   cors:
-    app-address: ${APP_ADDRESS:http://localhost:3000}
-    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+    allowed-origins: ${ALLOWED_ORIGINS}
+    app-address: ${APP_ADDRESS}
   admin:
-    email: ${ADMIN_EMAIL:awdiru@gmail.com}
+    email: ${ADMIN_EMAIL}
 
 spring:
   application:
-    name: quizizz
+    name: ps_quiz
 
   mail:
-    host: ${MAIL_HOST:smtp.yandex.ru}
+    host: ${MAIL_HOST}
     port: 465
-    username: ${MAIL_USERNAME:program-shcool@yandex.ru}
-    password: ${MAIL_PASSWORD:jlkkhlccvtkygrgn}
-    protocol: ${MAIL_PROTOCOL:smtps}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    protocol: ${MAIL_PROTOCOL}
     properties:
       mail:
         smtp:
@@ -35,13 +35,13 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
+      host: ${REDIS_HOST}
       port: 6379
 
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:6432/ps_quiz_db}
-    username: ${DB_USERNAME:awdiru@gmail.com}
-    password: ${DB_PASSWORD:VerySecurityPassword}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driverClassName: org.postgresql.Driver
 
   jpa:
@@ -50,7 +50,7 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
-    show-sql: true
+    show-sql: false # true # для разработки
     properties:
       hibernate:
         format_sql: true
@@ -62,7 +62,7 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.transaction: DEBUG
-    org.springframework.orm.jpa: DEBUG
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    org.springframework.transaction: INFO
+    org.springframework.orm.jpa: INFO
