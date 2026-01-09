@@ -8,6 +8,7 @@ const TestEditor = () => {
     const {testId} = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const [errors, setErrors] = useState({});
 
     const [questions, setQuestions] = useState([
         {questionText: '', answers: [{answerText: '', number: 1, isRight: false}]}
@@ -37,12 +38,47 @@ const TestEditor = () => {
     }, [testId]);
 
     const handleSave = async () => {
+        const newErrors = {};
+        let isValid = true;
+
+        questions.forEach((q, index) => {
+            const hasCorrectAnswer = q.answers.some(ans => ans.isRight);
+            const hasEmptyQuestion = q.questionText.trim() === '';
+            const hasEmptyAnswers = q.answers.some(ans => ans.answerText.trim() === '');
+
+            if (hasEmptyQuestion) {
+                newErrors[index] = "Текст вопроса не может быть пустым";
+                isValid = false;
+            } else if (hasEmptyAnswers) {
+                newErrors[index] = "Все варианты ответов должны быть заполнены";
+                isValid = false;
+            } else if (!hasCorrectAnswer) {
+                newErrors[index] = "Должен быть хотя бы один правильный ответ";
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            setErrors(newErrors);
+            const firstErrorIndex = Object.keys(newErrors)[0];
+            const errorElement = document.querySelectorAll('.question-card')[firstErrorIndex];
+            errorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
         try {
             await api.put(`/tests/${testId}/content`, {questions});
-            alert("Сохранено успешно!");
             goBack()
         } catch (err) {
             alert("Ошибка при сохранении");
+        }
+    };
+
+    const clearError = (qIndex) => {
+        if (errors[qIndex]) {
+            const newErrors = { ...errors };
+            delete newErrors[qIndex];
+            setErrors(newErrors);
         }
     };
 
@@ -74,6 +110,7 @@ const TestEditor = () => {
         const newQuestions = [...questions];
         newQuestions[qIndex].answers[aIndex].isRight = !newQuestions[qIndex].answers[aIndex].isRight;
         setQuestions(newQuestions);
+        clearError(qIndex);
     };
 
     return (
@@ -94,6 +131,13 @@ const TestEditor = () => {
                 {questions.map((q, qIndex) => (
                     <div key={qIndex} className="question-card">
                         <div className="question-number-badge">{qIndex + 1}</div>
+
+                        {/* Сообщение об ошибке */}
+                        {errors[qIndex] && (
+                            <div className="error-hint">
+                                {errors[qIndex]}
+                            </div>
+                        )}
 
                         <button
                             onClick={() => removeQuestion(qIndex)}
