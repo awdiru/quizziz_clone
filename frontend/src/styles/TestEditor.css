@@ -102,3 +102,13 @@
 .question-card:hover .question-number-badge {
     @apply bg-brand-purple transition-colors;
 }
+
+/* Подсказка об ошибке */
+.error-hint {
+    @apply absolute top-4 right-12 text-brand-red text-xs font-black uppercase tracking-wider animate-pulse;
+}
+
+/* Выделение карточки с ошибкой*/
+.question-card-error {
+    @apply border-brand-red shadow-md;
+}

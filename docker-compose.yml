@@ -5,11 +5,11 @@ services:
     ports:
       - "6432:5432"
     environment:
-      - POSTGRES_DB=ps_quiz_clone
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=ps_quiz_db
+      - POSTGRES_USER=awdiru@gmail.com
+      - POSTGRES_PASSWORD=VerySecurityPassword
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d ps_quiz_clone -U user"]
+      test: ["CMD-SHELL", "pg_isready -d ps_quiz_db -U awdiru@gmail.com"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -37,16 +37,17 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ps_quiz_clone
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ps_quiz_db
       - REDIS_HOST=redis
       - SPRING_DATA_REDIS_HOST=redis
-      - APP_JWT_SECRET=${APP_JWT_SECRET}
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - MAIL_HOST=${MAIL_HOST}
-      - MAIL_USERNAME=${MAIL_USERNAME}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - MAIL_PROTOCOL=${MAIL_PROTOCOL}
+      - APP_JWT_SECRET=${APP_JWT_SECRET:TestSecretKeyforlocaldevlnlnnnnbnuytrdcvbnjuytrdcvb}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:http://localhost:3000}
+      - APP_ADDRESS=${APP_ADDRESS:http://localhost:3000}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:awdiru@gmail.com}
+      - MAIL_HOST=${MAIL_HOST:smtp.yandex.ru}
+      - MAIL_USERNAME=${MAIL_USERNAME:program-shcool@yandex.ru}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:jlkkhlccvtkygrgn}
+      - MAIL_PROTOCOL=${MAIL_PROTOCOL:smtps}
     networks:
       - ps-quiz-network
 
