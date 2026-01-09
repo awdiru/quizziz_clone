@@ -39,9 +39,9 @@ spring:
       port: 6379
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:6432/ps_quiz_clone}
-    username: ${DB_USERNAME:user}
-    password: ${DB_PASSWORD:password}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:6432/ps_quiz_db}
+    username: ${DB_USERNAME:awdiru@gmail.com}
+    password: ${DB_PASSWORD:VerySecurityPassword}
     driverClassName: org.postgresql.Driver
 
   jpa:
