@@ -3,9 +3,10 @@ server:
 app:
   secret: ${APP_JWT_SECRET:TestSecretKeyforlocaldevlnlnnnnbnuytrdcvbnjuytrdcvb}
   cors:
-    allowed-origins: ${ALLOWED_ORIGIN:http://localhost:3000}
+    app-address: ${APP_ADDRESS:http://localhost:3000}
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
   admin:
-    email: ${ADMIN_EMAIL:test@mail.ru}
+    email: ${ADMIN_EMAIL:awdiru@gmail.com}
 
 spring:
   application:
@@ -14,8 +15,8 @@ spring:
   mail:
     host: ${MAIL_HOST:smtp.yandex.ru}
     port: 465
-    username: ${MAIL_USERNAME:test@mail.ru}
-    password: ${MAIL_PASSWORD:password}
+    username: ${MAIL_USERNAME:program-shcool@yandex.ru}
+    password: ${MAIL_PASSWORD:jlkkhlccvtkygrgn}
     protocol: ${MAIL_PROTOCOL:smtps}
     properties:
       mail:
@@ -38,7 +39,7 @@ spring:
       port: 6379
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:6432/quizizz_clone}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:6432/ps_quiz_clone}
     username: ${DB_USERNAME:user}
     password: ${DB_PASSWORD:password}
     driverClassName: org.postgresql.Driver

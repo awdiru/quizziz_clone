@@ -10,8 +10,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
     @Value("${app.cors.allowed-origins}")
-    private String FRONTEND_ADDRESS;
+    private String ALLOWED_ORIGINS;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -25,7 +26,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Точка подключения к WebSocket
         registry.addEndpoint("/ws-quiz")
-                .setAllowedOrigins(FRONTEND_ADDRESS)
+                .setAllowedOrigins(ALLOWED_ORIGINS)
                 .withSockJS();
     }
 }
